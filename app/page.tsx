@@ -884,7 +884,7 @@ export default function CrimsonAnimatedPortfolio() {
 
         <section className="py-20 md:py-32 px-6 md:px-[10vw] relative">
           <div className="mb-16 md:mb-24 border-b border-white/10 pb-6 md:pb-8">
-            <RevealText><h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">03 // LORE & STATS</h2></RevealText>
+            <RevealText><h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">03 // Internship / Training</h2></RevealText>
             <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2">Academic History Records</p>
           </div>
 
@@ -915,6 +915,17 @@ export default function CrimsonAnimatedPortfolio() {
                  </div>
               </TiltCard>
             ))}
+
+            <div className="mt-16 md:mt-24 mb-8 md:mb-12 border-b border-white/10 pb-6 md:pb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
+              <div>
+                <RevealText>
+                  <h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">03 // Education</h2>
+                </RevealText>
+                <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2">
+                  Academic History Records
+                </p>
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
               <TiltCard className="flex flex-col justify-between !p-6 md:!p-10" floatDelay={1}>
@@ -957,7 +968,7 @@ export default function CrimsonAnimatedPortfolio() {
           <div className="px-6 md:px-[10vw] mb-8 md:mb-12 border-b border-white/10 pb-6 md:pb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
             <div>
               <RevealText>
-                <h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">04 // BADGES</h2>
+                <h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">04 // Certificates</h2>
               </RevealText>
               <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2">
                 Verified Achievement Loot Stream
