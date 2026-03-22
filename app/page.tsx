@@ -7,7 +7,7 @@ import { EffectComposer, Bloom, ChromaticAberration } from "@react-three/postpro
 import { BlendFunction } from "postprocessing";
 import { ReactLenis } from "lenis/react";
 import { motion, AnimatePresence, useTransform, useSpring, useMotionValue } from "framer-motion";
-import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, ExternalLink, Gamepad2, ArrowRight, ShieldAlert, Crosshair, MonitorSmartphone, Download } from "lucide-react";
+import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, ExternalLink, Gamepad2, ArrowRight, ShieldAlert, Crosshair, MonitorSmartphone, Download, Briefcase } from "lucide-react";
 import * as THREE from "three";
 
 const GlobalStyles = () => (
@@ -577,6 +577,46 @@ export default function CrimsonAnimatedPortfolio() {
     }
   }, [isMobile]);
 
+  const projects = [
+    {
+      id: "P1",
+      title: "APPLE INTERFACE CLONE",
+      date: "AUG 2025",
+      description: "Highly accurate clone replicating the design and layout of the original Apple site. Built with strict SEO protocols, meta-tag optimization, and responsive logic.",
+      tags: ["HTML/CSS", "SEO ARCHITECTURE", "RESPONSIVE UI"],
+      img: "/apple.png",
+      preview: "https://mukulsingh06.github.io/Apple_Clone/",
+      github: "https://github.com/Mukulsingh06/Apple_Clone",
+      reversed: false
+    },
+    {
+      id: "P2",
+      title: "NGO PHILANTHROPIC PORTAL",
+      date: "JUN 2023",
+      description: "Engineered a seamless cross-device donation platform. Designed a structured content hierarchy with intuitive calls-to-action to maximize user engagement and conversion routing.",
+      tags: ["FRONTEND UX", "CROSS-DEVICE", "CONVERSIONS"],
+      img: "/ngo.png",
+      preview: "https://mukulsingh06.github.io/NGO_DONATION/",
+      github: "https://github.com/Mukulsingh06/NGO_DONATION",
+      reversed: true
+    }
+  ];
+
+  const trainings = [
+    {
+      id: "T1",
+      title: "INTENSIVE DSA TRAINING",
+      org: "Self-Paced / Guided",
+      duration: "JUN 23 - JUL 23",
+      description: [
+        "Mastered core Data Structures and Algorithms using C++.",
+        "Engineered optimal solutions for competitive programming challenges.",
+        "Focused heavily on reducing Big-O time and space complexity."
+      ],
+      certImg: "/certificate/.png"
+    }
+  ];
+
   const certificates = [
     { id: "C1", title: "Full Stack Dev", org: "Board Infinity", date: "Jan 2024", rarity: "LEGENDARY", img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000" },
     { id: "C2", title: "CSS Basics", org: "HackerRank", date: "Oct 2025", rarity: "RARE", img: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=1000" },
@@ -615,12 +655,12 @@ export default function CrimsonAnimatedPortfolio() {
               
               <div className="p-8 md:p-12 flex flex-col md:flex-row gap-12 items-stretch">
                 <a 
-                  href={`/certificates?id=${activeItem.id}&title=${encodeURIComponent(activeItem.title)}&img=${encodeURIComponent(activeItem.img)}&org=${encodeURIComponent(activeItem.org)}&date=${encodeURIComponent(activeItem.date)}&rarity=${encodeURIComponent(activeItem.rarity)}`}
+                  href={`/certificates?id=${activeItem.id}&title=${encodeURIComponent(activeItem.title)}&img=${encodeURIComponent(activeItem.img || activeItem.certImg)}&org=${encodeURIComponent(activeItem.org)}&date=${encodeURIComponent(activeItem.date || activeItem.duration)}&rarity=${encodeURIComponent(activeItem.rarity || 'TRAINING')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full md:w-1/2 h-48 md:h-auto border border-[#FF003C]/30 relative flex items-center justify-center overflow-hidden cut-corner interactive group cursor-pointer block"
                 >
-                  <img src={activeItem.img} alt="Cert" className="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-40 md:mix-blend-luminosity grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" />
+                  <img src={activeItem.img || activeItem.certImg} alt="Cert" className="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-40 md:mix-blend-luminosity grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" />
                   <div className="absolute inset-0 bg-[#FF003C] md:mix-blend-overlay opacity-30 md:opacity-50 group-hover:opacity-10 transition-opacity duration-500" />
                   <Award size={80} className="text-white relative z-10 drop-shadow-[0_0_20px_#FF003C] md:w-[100px] md:h-[100px] group-hover:scale-125 transition-transform duration-500" />
                   <div className="absolute top-4 right-4 bg-[#050505]/80 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm border border-[#FF003C]/50 z-20">
@@ -628,11 +668,11 @@ export default function CrimsonAnimatedPortfolio() {
                   </div>
                 </a>
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
-                   <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity} ITEM</span>
+                   <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity || 'TRAINING'} ITEM</span>
                    <h3 className="font-display text-4xl md:text-6xl text-white mb-6 leading-none tracking-wide">{activeItem.title}</h3>
                    <div className="font-mono text-white/70 space-y-4 mb-8 text-sm md:text-base">
                      <p className="flex justify-between border-b border-white/10 pb-2"><span>ISSUER:</span> <span className="text-white font-bold">{activeItem.org}</span></p>
-                     <p className="flex justify-between border-b border-white/10 pb-2"><span>ACQUIRED:</span> <span className="text-white font-bold">{activeItem.date}</span></p>
+                     <p className="flex justify-between border-b border-white/10 pb-2"><span>ACQUIRED:</span> <span className="text-white font-bold">{activeItem.date || activeItem.duration}</span></p>
                    </div>
                    <div className="mt-auto p-4 bg-[#FF003C]/10 border border-[#FF003C] text-[#FF003C] font-mono text-xs md:text-sm flex items-center justify-center gap-3">
                      <ShieldAlert size={18} /> STATUS: VERIFIED CREDENTIAL
@@ -793,69 +833,44 @@ export default function CrimsonAnimatedPortfolio() {
           </div>
           
           <div className="flex flex-col gap-16 md:gap-32 max-w-screen-2xl mx-auto">
-            
-            <TiltCard className="p-0 border-none bg-transparent hover:border-transparent hover:shadow-none" floatDelay={0}>
-              <div className="flex flex-col lg:flex-row gap-0 group bg-[#0A0A0A] border border-[#FF003C]/30 cut-corner overflow-hidden">
-                <div className="w-full lg:w-1/2 h-[300px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 lg:border-r border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000')] bg-cover bg-center opacity-40 md:opacity-20 md:mix-blend-luminosity grayscale md:group-hover:scale-110 md:group-hover:opacity-50 transition-all duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
-                  <MonitorSmartphone className="text-[#FF003C] w-20 h-20 md:w-32 md:h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,0,60,0.5)] md:group-hover:scale-110 transition-transform duration-500" />
-                </div>
-                
-                <div className="w-full lg:w-1/2 p-6 md:p-12 flex flex-col justify-center">
-                  <span className="font-mono text-[#FF003C] text-[10px] md:text-xs border border-[#FF003C] px-3 py-1 md:px-4 md:py-2 tracking-widest bg-[#FF003C]/10 cut-corner w-fit mb-4 md:mb-6">AUG 2025</span>
-                  <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-4 md:mb-6 leading-none">APPLE INTERFACE CLONE</h3>
-                  <p className="font-mono text-white/60 text-sm md:text-lg leading-relaxed mb-6 md:mb-10">
-                    Highly accurate clone replicating the design and layout of the original Apple site. Built with strict SEO protocols, meta-tag optimization, and responsive logic.
-                  </p>
-                  <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 border-l-2 border-[#FF003C] pl-3 md:pl-4">
-                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► HTML/CSS</span>
-                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► SEO ARCHITECTURE</span>
-                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► RESPONSIVE UI</span>
+            {projects.map((project, index) => (
+              <TiltCard key={project.id} className="p-0 border-none bg-transparent hover:border-transparent hover:shadow-none" floatDelay={index * 0.5}>
+                <div className={`flex flex-col ${project.reversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-0 group bg-[#0A0A0A] border border-[#FF003C]/30 ${project.reversed ? 'cut-corner-reverse' : 'cut-corner'} overflow-hidden`}>
+                  
+                  <div className={`w-full lg:w-1/2 h-[300px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 ${project.reversed ? 'lg:border-l' : 'lg:border-r'} border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden`}>
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center opacity-40 md:opacity-20 md:mix-blend-luminosity grayscale md:group-hover:scale-110 md:group-hover:opacity-50 transition-all duration-700" 
+                      style={{ backgroundImage: `url('${project.img}')` }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
+                    <MonitorSmartphone className={`${project.reversed ? 'text-white' : 'text-[#FF003C]'} w-20 h-20 md:w-32 md:h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,0,60,0.5)] md:group-hover:scale-110 transition-transform duration-500`} />
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-auto">
-                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-[#FF003C] text-white px-6 py-3 hover:bg-white hover:text-black transition-colors cut-corner interactive flex justify-center items-center gap-2">
-                      <ExternalLink size={20} className="md:w-6 md:h-6" /> PREVIEW
-                    </a>
-                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-transparent border border-white text-white px-6 py-3 hover:bg-white/10 transition-colors cut-corner interactive flex justify-center items-center gap-2">
-                      <Github size={20} className="md:w-6 md:h-6" /> GITHUB
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </TiltCard>
-
-            <TiltCard className="p-0 border-none bg-transparent hover:border-transparent hover:shadow-none" floatDelay={1.5}>
-              <div className="flex flex-col lg:flex-row-reverse gap-0 group bg-[#0A0A0A] border border-[#FF003C]/30 cut-corner-reverse overflow-hidden">
-                <div className="w-full lg:w-1/2 h-[300px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 lg:border-l border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000')] bg-cover bg-center opacity-40 md:opacity-20 md:mix-blend-luminosity grayscale md:group-hover:scale-110 md:group-hover:opacity-50 transition-all duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
-                  <MonitorSmartphone className="text-white w-20 h-20 md:w-32 md:h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.5)] md:group-hover:scale-110 transition-transform duration-500" />
-                </div>
-                
-                <div className="w-full lg:w-1/2 p-6 md:p-12 flex flex-col justify-center">
-                  <span className="font-mono text-white text-[10px] md:text-xs border border-white px-3 py-1 md:px-4 md:py-2 tracking-widest bg-white/10 cut-corner w-fit mb-4 md:mb-6">JUN 2023</span>
-                  <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-4 md:mb-6 leading-none">NGO PHILANTHROPIC PORTAL</h3>
-                  <p className="font-mono text-white/60 text-sm md:text-lg leading-relaxed mb-6 md:mb-10">
-                    Engineered a seamless cross-device donation platform. Designed a structured content hierarchy with intuitive calls-to-action to maximize user engagement and conversion routing.
-                  </p>
-                  <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 border-l-2 border-white pl-3 md:pl-4">
-                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► FRONTEND UX</span>
-                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► CROSS-DEVICE</span>
-                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► CONVERSIONS</span>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-auto">
-                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-white text-black px-6 py-3 hover:bg-[#FF003C] hover:text-white transition-colors cut-corner interactive flex justify-center items-center gap-2">
-                      <ExternalLink size={20} className="md:w-6 md:h-6" /> PREVIEW
-                    </a>
-                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-transparent border border-white text-white px-6 py-3 hover:bg-white/10 transition-colors cut-corner interactive flex justify-center items-center gap-2">
-                      <Github size={20} className="md:w-6 md:h-6" /> GITHUB
-                    </a>
+                  
+                  <div className="w-full lg:w-1/2 p-6 md:p-12 flex flex-col justify-center">
+                    <span className={`font-mono ${project.reversed ? 'text-white border-white bg-white/10' : 'text-[#FF003C] border-[#FF003C] bg-[#FF003C]/10'} text-[10px] md:text-xs border px-3 py-1 md:px-4 md:py-2 tracking-widest cut-corner w-fit mb-4 md:mb-6`}>
+                      {project.date}
+                    </span>
+                    <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-4 md:mb-6 leading-none">{project.title}</h3>
+                    <p className="font-mono text-white/60 text-sm md:text-lg leading-relaxed mb-6 md:mb-10">
+                      {project.description}
+                    </p>
+                    <div className={`flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 border-l-2 ${project.reversed ? 'border-white' : 'border-[#FF003C]'} pl-3 md:pl-4`}>
+                      {project.tags.map(tag => (
+                        <span key={tag} className="font-mono text-xs md:text-sm text-white/80 uppercase">► {tag}</span>
+                      ))}
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-auto">
+                      <a href={project.preview} target="_blank" rel="noopener noreferrer" className={`font-display text-2xl md:text-3xl tracking-widest ${project.reversed ? 'bg-white text-black hover:bg-[#FF003C] hover:text-white' : 'bg-[#FF003C] text-white hover:bg-white hover:text-black'} px-6 py-3 transition-colors cut-corner interactive flex justify-center items-center gap-2`}>
+                        <ExternalLink size={20} /> PREVIEW
+                      </a>
+                      <a href={project.github} target="_blank" rel="noopener noreferrer" className="font-display text-2xl md:text-3xl tracking-widest bg-transparent border border-white text-white px-6 py-3 hover:bg-white/10 transition-colors cut-corner interactive flex justify-center items-center gap-2">
+                        <Github size={20} /> GITHUB
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </TiltCard>
-
+              </TiltCard>
+            ))}
           </div>
         </section>
 
@@ -867,21 +882,31 @@ export default function CrimsonAnimatedPortfolio() {
 
           <div className="max-w-screen-2xl mx-auto flex flex-col gap-8 md:gap-10">
             
-            <TiltCard className="border-l-[4px] md:border-l-[8px] border-l-[#FF003C] !p-0" floatDelay={0}>
-               <div className="flex flex-col lg:flex-row items-stretch">
-                 <div className="p-6 md:p-12 bg-[#FF003C]/10 border-b lg:border-b-0 lg:border-r border-[#FF003C]/30 flex flex-col justify-center w-full lg:w-2/5 relative overflow-hidden">
-                   <Cpu className="text-[#FF003C] opacity-10 absolute -right-4 -bottom-4 md:-right-10 md:-bottom-10 w-32 h-32 md:w-64 md:h-64" />
-                   <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-3 md:mb-4 relative z-10 leading-none">INTENSIVE DSA TRAINING</h3>
-                   <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-widest relative z-10 border border-[#FF003C] px-2 py-1 md:px-3 md:py-1 w-fit bg-[#FF003C]/10 cut-corner">JUN 23 - JUL 23</p>
+            {trainings.map((training, index) => (
+              <TiltCard key={training.id} className="border-l-[4px] md:border-l-[8px] border-l-[#FF003C] !p-0" floatDelay={index * 0.5}>
+                 <div className="flex flex-col lg:flex-row items-stretch">
+                   <div className="p-6 md:p-12 bg-[#FF003C]/10 border-b lg:border-b-0 lg:border-r border-[#FF003C]/30 flex flex-col justify-center w-full lg:w-2/5 relative overflow-hidden">
+                     <Cpu className="text-[#FF003C] opacity-10 absolute -right-4 -bottom-4 md:-right-10 md:-bottom-10 w-32 h-32 md:w-64 md:h-64" />
+                     <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-3 md:mb-4 relative z-10 leading-none">{training.title}</h3>
+                     <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-widest relative z-10 border border-[#FF003C] px-2 py-1 md:px-3 md:py-1 w-fit bg-[#FF003C]/10 cut-corner mb-4">{training.duration}</p>
+                     {training.certImg && (
+                       <button 
+                         onClick={() => setActiveItem(training)}
+                         className="interactive w-fit mt-4 bg-transparent border border-[#FF003C] text-[#FF003C] hover:bg-[#FF003C] hover:text-white px-4 py-2 font-mono text-xs md:text-sm transition-colors flex items-center gap-2 cut-corner z-20 relative"
+                       >
+                         <Award size={16} /> VIEW CERTIFICATE
+                       </button>
+                     )}
+                   </div>
+                   
+                   <div className="p-6 md:p-12 font-mono text-white/70 space-y-4 md:space-y-6 text-sm md:text-lg w-full lg:w-3/5">
+                     {training.description.map((desc, i) => (
+                       <p key={i} className="flex gap-3 md:gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> {desc}</p>
+                     ))}
+                   </div>
                  </div>
-                 
-                 <div className="p-6 md:p-12 font-mono text-white/70 space-y-4 md:space-y-6 text-sm md:text-lg w-full lg:w-3/5">
-                   <p className="flex gap-3 md:gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Mastered core Data Structures and Algorithms using C++.</p>
-                   <p className="flex gap-3 md:gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Engineered optimal solutions for competitive programming challenges.</p>
-                   <p className="flex gap-3 md:gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Focused heavily on reducing Big-O time and space complexity.</p>
-                 </div>
-               </div>
-            </TiltCard>
+              </TiltCard>
+            ))}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
               <TiltCard className="flex flex-col justify-between !p-6 md:!p-10" floatDelay={1}>
