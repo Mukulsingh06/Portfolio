@@ -11,8 +11,7 @@ import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, 
 import * as THREE from "three";
 
 const GlobalStyles = () => (
-  <style dangerouslySetInnerHTML={{
-    __html: `
+  <style dangerouslySetInnerHTML={{__html: `
     @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Press+Start+2P&display=swap');
     
     .font-display { font-family: 'Teko', sans-serif; text-transform: uppercase; line-height: 0.9; }
@@ -50,6 +49,17 @@ const GlobalStyles = () => (
   `}} />
 );
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  return isMobile;
+}
+
 function useKonamiCode() {
   const [retroMode, setRetroMode] = useState(false);
   useEffect(() => {
@@ -74,6 +84,7 @@ function useKonamiCode() {
 function GameplayPreloader({ onComplete }: { onComplete: () => void }) {
   const [logs, setLogs] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
+  const isMobile = useIsMobile();
 
   const bootMessages = [
     "INITIALIZING CORE_ARCHITECT_V3...",
@@ -104,29 +115,29 @@ function GameplayPreloader({ onComplete }: { onComplete: () => void }) {
         return p + Math.random() * 8;
       });
     }, 150);
-
+    
     return () => { clearInterval(logInterval); clearInterval(progInterval); };
   }, [onComplete]);
 
   return (
-    <motion.div
-      exit={{ clipPath: "polygon(0 50%, 100% 50%, 100% 50%, 0 50%)", transition: { duration: 0.8, ease: "circIn" } }}
+    <motion.div 
+      exit={isMobile ? { opacity: 0, transition: { duration: 0.5 } } : { clipPath: "polygon(0 50%, 100% 50%, 100% 50%, 0 50%)", transition: { duration: 0.8, ease: "circIn" } }} 
       className="fixed inset-0 z-[9999] bg-[#020202] flex flex-col justify-center items-center font-mono"
     >
       <div className="absolute top-10 left-10 text-[#FF003C] text-[10px] opacity-40">
         <p>BUILD_ID: 2026.03.20_MS</p>
         <p>LOC: CHANDIGARH_NODE_01</p>
       </div>
-
+      
       <div className="relative z-10 flex flex-col items-center">
-        <motion.div
-          animate={{ opacity: [0.2, 1, 0.2] }}
+        <motion.div 
+          animate={{ opacity: [0.2, 1, 0.2] }} 
           transition={{ repeat: Infinity, duration: 0.1 }}
           className="w-16 h-16 border-2 border-[#FF003C] mb-8 flex items-center justify-center rotate-45"
         >
           <div className="w-8 h-8 bg-[#FF003C] animate-pulse" />
         </motion.div>
-
+        
         <div className="h-32 mb-4 overflow-hidden text-left w-64">
           {logs.map((log, i) => (
             <p key={i} className="text-[#FF003C] text-xs mb-1">{log}</p>
@@ -134,9 +145,9 @@ function GameplayPreloader({ onComplete }: { onComplete: () => void }) {
         </div>
 
         <div className="w-64 h-1 bg-white/10 relative">
-          <motion.div
-            className="absolute inset-0 bg-[#FF003C] shadow-[0_0_15px_#FF003C]"
-            style={{ width: `${progress}%` }}
+          <motion.div 
+             className="absolute inset-0 bg-[#FF003C] shadow-[0_0_15px_#FF003C]" 
+             style={{ width: `${progress}%` }} 
           />
         </div>
       </div>
@@ -177,20 +188,19 @@ function CrosshairCursor() {
   const cursorY = useSpring(-100, { stiffness: 1000, damping: 40 });
   const [isHovered, setIsHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setMounted(true);
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      setIsMobile(true);
+    if (window.matchMedia("(pointer: coarse)").matches || isMobile) {
       return;
     }
 
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+    const moveCursor = (e: MouseEvent) => { 
+      cursorX.set(e.clientX); 
+      cursorY.set(e.clientY); 
     };
-
+    
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest("a, button, .interactive, .tilt-card, input, textarea")) {
@@ -202,12 +212,12 @@ function CrosshairCursor() {
 
     window.addEventListener("mousemove", moveCursor, { passive: true });
     window.addEventListener("mouseover", handleMouseOver, { passive: true });
-
+    
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, [cursorX, cursorY]);
+  }, [cursorX, cursorY, isMobile]);
 
   if (!mounted || isMobile) return null;
 
@@ -216,7 +226,7 @@ function CrosshairCursor() {
       className="fixed top-0 left-0 pointer-events-none z-[99999] mix-blend-difference items-center justify-center -translate-x-1/2 -translate-y-1/2 hidden md:flex"
       style={{ x: cursorX, y: cursorY }}
     >
-      <motion.div
+      <motion.div 
         animate={{ scale: isHovered ? 1.5 : 1, rotate: isHovered ? 90 : 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}
         className="relative flex items-center justify-center text-[#FF003C]"
@@ -257,14 +267,14 @@ function MouseReactiveLight() {
   return <pointLight ref={lightRef} color="#FF003C" intensity={50} distance={20} decay={2} />;
 }
 
-function BloodGrid({ isBooting }: { isBooting: boolean }) {
+function BloodGrid({ isBooting, isMobile }: { isBooting: boolean, isMobile: boolean }) {
   const gridRef = useRef<THREE.Group>(null);
   const [sparkleCount, setSparkleCount] = useState(100);
 
   useEffect(() => {
-    setSparkleCount(window.innerWidth > 768 ? 250 : 100);
+    setSparkleCount(window.innerWidth > 768 ? 250 : 50);
   }, []);
-
+  
   useFrame((state) => {
     if (gridRef.current) {
       const speed = isBooting ? 5 : 1.5;
@@ -278,7 +288,7 @@ function BloodGrid({ isBooting }: { isBooting: boolean }) {
       <CameraRig isBooting={isBooting} />
       <ambientLight intensity={0.2} />
       <directionalLight position={[0, 10, 5]} intensity={1} color="#FF003C" />
-      <MouseReactiveLight />
+      {!isMobile && <MouseReactiveLight />}
 
       <group ref={gridRef}>
         <Grid position={[0, -4, 0]} args={[150, 150]} cellColor="#FF003C" sectionColor="#FF003C" sectionSize={4} cellSize={1} fadeDistance={40} cellThickness={0.8} />
@@ -297,10 +307,12 @@ function BloodGrid({ isBooting }: { isBooting: boolean }) {
         </mesh>
       </Float>
 
-      <EffectComposer enableNormalPass>
-        <Bloom luminanceThreshold={0.2} intensity={isBooting ? 3 : 1.5} />
-        <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={new THREE.Vector2(0.002, 0.002)} />
-      </EffectComposer>
+      {!isMobile && (
+        <EffectComposer enableNormalPass>
+          <Bloom luminanceThreshold={0.2} intensity={isBooting ? 3 : 1.5} />
+          <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={new THREE.Vector2(0.002, 0.002)} />
+        </EffectComposer>
+      )}
     </>
   );
 }
@@ -311,7 +323,7 @@ const RevealText = ({ children, delay = 0 }: { children: React.ReactNode, delay?
       <motion.div
         initial={{ y: "100%", skewY: 10, opacity: 0 }}
         whileInView={{ y: 0, skewY: 0, opacity: 1 }}
-        viewport={{ once: true, margin: "-10%" }}
+        viewport={{ once: true, margin: "-10%" }} 
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay }}
       >
         {children}
@@ -320,21 +332,25 @@ const RevealText = ({ children, delay = 0 }: { children: React.ReactNode, delay?
   );
 };
 
-const ContinuousFloat = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
-  <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay }}>
-    {children}
-  </motion.div>
-);
+const ContinuousFloat = ({ children, delay = 0, isMobile }: { children: React.ReactNode, delay?: number, isMobile: boolean }) => {
+  if (isMobile) return <>{children}</>;
+  return (
+    <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay }}>
+      {children}
+    </motion.div>
+  );
+};
 
 const TiltCard = ({ children, className = "", floatDelay = 0 }: { children: React.ReactNode, className?: string, floatDelay?: number }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 400, damping: 30 });
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 400, damping: 30 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!ref.current || isMobile) return;
     const rect = ref.current.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -344,24 +360,28 @@ const TiltCard = ({ children, className = "", floatDelay = 0 }: { children: Reac
     y.set(mouseY / height - 0.5);
   };
 
-  const handleMouseLeave = () => { x.set(0); y.set(0); };
+  const handleMouseLeave = () => { 
+    if (isMobile) return;
+    x.set(0); 
+    y.set(0); 
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-5%" }}
+      viewport={{ once: true, margin: "-5%" }} 
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <ContinuousFloat delay={floatDelay}>
+      <ContinuousFloat delay={floatDelay} isMobile={isMobile}>
         <motion.div
           ref={ref}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+          style={isMobile ? {} : { rotateX, rotateY, transformStyle: "preserve-3d" }}
           className={`tilt-card relative bg-[#0A0A0A] border border-[#FF003C]/30 cut-corner group transition-colors duration-300 hover:border-[#FF003C] hover:shadow-[0_0_40px_rgba(255,0,60,0.4)] ${className}`}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#FF003C]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#FF003C]/5 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
           <div className="relative z-10 w-full h-full p-8 md:p-12 transform-[translateZ(30px)]">
             {children}
           </div>
@@ -461,7 +481,6 @@ function TerminalContactForm() {
   );
 }
 
-
 function CertificateStream({ items, reverse = false, onSelect }: { items: any[], reverse?: boolean, onSelect: (item: any) => void }) {
   return (
     <div className="relative w-full overflow-hidden py-4">
@@ -472,16 +491,16 @@ function CertificateStream({ items, reverse = false, onSelect }: { items: any[],
             onClick={() => onSelect(cert)}
             className="group relative w-72 h-44 bg-[#0A0A0A] border border-white/10 hover:border-[#FF003C] transition-all p-6 text-left cut-corner-reverse flex-shrink-0 cursor-pointer overflow-hidden"
           >
-            <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-0 right-0 p-2 opacity-5 md:group-hover:opacity-100 transition-opacity">
               <Award className="text-[#FF003C]" size={24} />
             </div>
             <span className="font-mono text-[10px] text-[#FF003C] tracking-widest border border-[#FF003C]/30 px-2 py-0.5">{cert.rarity}</span>
-            <h4 className="font-display text-2xl text-white mt-4 leading-tight uppercase group-hover:text-[#FF003C] transition-colors">{cert.title}</h4>
+            <h4 className="font-display text-2xl text-white mt-4 leading-tight uppercase md:group-hover:text-[#FF003C] transition-colors">{cert.title}</h4>
             <div className="mt-auto flex justify-between items-end">
               <p className="font-mono text-[10px] text-white/40 uppercase tracking-tighter">{cert.org}</p>
               <p className="font-mono text-[10px] text-[#FF003C]">{cert.date}</p>
             </div>
-            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#FF003C] group-hover:w-full transition-all duration-500" />
+            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#FF003C] md:group-hover:w-full transition-all duration-500" />
           </button>
         ))}
       </div>
@@ -502,15 +521,15 @@ function LowPowerBackground() {
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FF003C] rounded-full blur-[150px] opacity-[0.05]" />
 
-      <motion.div
-        animate={{ y: ["-10vh", "110vh"] }}
+      <motion.div 
+        animate={{ y: ["-10vh", "110vh"] }} 
         transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
         className="absolute top-0 left-0 w-full h-[2px] bg-[#FF003C] opacity-20 shadow-[0_0_20px_#FF003C] z-10"
       />
 
       <div className="absolute inset-0 z-0">
         {[...Array(15)].map((_, i) => (
-          <motion.div
+          <motion.div 
             key={i}
             animate={{ opacity: [0.1, 0.5, 0.1] }}
             transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 5 }}
@@ -524,14 +543,14 @@ function LowPowerBackground() {
 
       <div className="absolute inset-0 flex justify-around w-full opacity-40">
         {[...Array(12)].map((_, i) => (
-          <motion.div
+          <motion.div 
             key={i}
             initial={{ y: "-100%" }}
             animate={{ y: "100vh" }}
-            transition={{
+            transition={{ 
               duration: 5 + Math.random() * 10,
-              repeat: Infinity,
-              ease: "linear",
+              repeat: Infinity, 
+              ease: "linear", 
               delay: Math.random() * 5
             }}
             style={{ height: `${Math.random() * 150 + 50}px` }}
@@ -547,9 +566,16 @@ export default function CrimsonAnimatedPortfolio() {
   const [isBooting, setIsBooting] = useState(true);
   const [activeItem, setActiveItem] = useState<any>(null);
   const [vfxEnabled, setVfxEnabled] = useState(true);
-
+  const isMobile = useIsMobile();
+  
   const handleBootComplete = useCallback(() => setIsBooting(false), []);
   const isRetroMode = useKonamiCode();
+
+  useEffect(() => {
+    if (isMobile) {
+      setVfxEnabled(false);
+    }
+  }, [isMobile]);
 
   const certificates = [
     { id: "C1", title: "Full Stack Dev", org: "Board Infinity", date: "Jan 2024", rarity: "LEGENDARY", img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000" },
@@ -563,7 +589,7 @@ export default function CrimsonAnimatedPortfolio() {
   return (
     <ReactLenis root options={{ lerp: 0.05, smoothWheel: true }}>
       <GlobalStyles />
-
+      
       <AnimatePresence mode="wait">
         {isBooting && <GameplayPreloader key="preloader" onComplete={handleBootComplete} />}
       </AnimatePresence>
@@ -572,37 +598,37 @@ export default function CrimsonAnimatedPortfolio() {
 
       <AnimatePresence>
         {activeItem && (
-          <motion.div
+          <motion.div 
             key="modal-backdrop"
             initial={{ opacity: 0, backdropFilter: "blur(0px)" }} animate={{ opacity: 1, backdropFilter: "blur(10px)" }} exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-            className="fixed inset-0 z-[9000] flex items-center justify-center bg-[#050505]/90 p-4 md:p-12"
+            className="fixed inset-0 z-[9000] flex items-center justify-center bg-[#050505]/95 md:bg-[#050505]/90 p-4 md:p-12"
           >
-            <motion.div
+            <motion.div 
               key="modal-content"
               initial={{ scale: 0.9, y: 50, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 50, opacity: 0 }} transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full max-w-5xl bg-[#0A0A0A] border border-[#FF003C] cut-corner-both shadow-[0_0_50px_rgba(255,0,60,0.6)] flex flex-col relative"
+              className="w-full max-w-5xl bg-[#0A0A0A] border border-[#FF003C] cut-corner-both shadow-[0_0_50px_rgba(255,0,60,0.6)] flex flex-col relative overflow-y-auto max-h-[90vh] md:max-h-none"
             >
-              <div className="bg-[#FF003C] px-6 py-4 flex justify-between items-center text-white">
+              <div className="bg-[#FF003C] px-6 py-4 flex justify-between items-center text-white sticky top-0 z-20">
                 <span className="font-mono text-sm font-bold tracking-widest uppercase">ITEM_INSPECTION // {activeItem.id}</span>
                 <button onClick={() => setActiveItem(null)} className="interactive hover:text-black transition-colors font-bold"><X /></button>
               </div>
-
+              
               <div className="p-8 md:p-12 flex flex-col md:flex-row gap-12 items-stretch">
-                <div className="w-full md:w-1/2 h-64 md:h-auto border border-[#FF003C]/30 relative flex items-center justify-center overflow-hidden cut-corner">
-                  <img src={activeItem.img} alt="Cert" className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity grayscale" />
-                  <div className="absolute inset-0 bg-[#FF003C] mix-blend-overlay opacity-50" />
-                  <Award size={100} className="text-white relative z-10 drop-shadow-[0_0_20px_#FF003C]" />
+                <div className="w-full md:w-1/2 h-48 md:h-auto border border-[#FF003C]/30 relative flex items-center justify-center overflow-hidden cut-corner">
+                  <img src={activeItem.img} alt="Cert" className="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-40 md:mix-blend-luminosity grayscale" />
+                  <div className="absolute inset-0 bg-[#FF003C] md:mix-blend-overlay opacity-30 md:opacity-50" />
+                  <Award size={80} className="text-white relative z-10 drop-shadow-[0_0_20px_#FF003C] md:w-[100px] md:h-[100px]" />
                 </div>
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
-                  <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity} ITEM</span>
-                  <h3 className="font-display text-5xl md:text-6xl text-white mb-6 leading-none tracking-wide">{activeItem.title}</h3>
-                  <div className="font-mono text-white/70 space-y-4 mb-8">
-                    <p className="flex justify-between border-b border-white/10 pb-2"><span>ISSUER:</span> <span className="text-white font-bold">{activeItem.org}</span></p>
-                    <p className="flex justify-between border-b border-white/10 pb-2"><span>ACQUIRED:</span> <span className="text-white font-bold">{activeItem.date}</span></p>
-                  </div>
-                  <div className="mt-auto p-4 bg-[#FF003C]/10 border border-[#FF003C] text-[#FF003C] font-mono text-sm flex items-center justify-center gap-3">
-                    <ShieldAlert size={18} /> STATUS: VERIFIED CREDENTIAL
-                  </div>
+                   <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity} ITEM</span>
+                   <h3 className="font-display text-4xl md:text-6xl text-white mb-6 leading-none tracking-wide">{activeItem.title}</h3>
+                   <div className="font-mono text-white/70 space-y-4 mb-8 text-sm md:text-base">
+                     <p className="flex justify-between border-b border-white/10 pb-2"><span>ISSUER:</span> <span className="text-white font-bold">{activeItem.org}</span></p>
+                     <p className="flex justify-between border-b border-white/10 pb-2"><span>ACQUIRED:</span> <span className="text-white font-bold">{activeItem.date}</span></p>
+                   </div>
+                   <div className="mt-auto p-4 bg-[#FF003C]/10 border border-[#FF003C] text-[#FF003C] font-mono text-xs md:text-sm flex items-center justify-center gap-3">
+                     <ShieldAlert size={18} /> STATUS: VERIFIED CREDENTIAL
+                   </div>
                 </div>
               </div>
             </motion.div>
@@ -612,9 +638,9 @@ export default function CrimsonAnimatedPortfolio() {
 
       {vfxEnabled ? (
         <div className="fixed inset-0 z-0 pointer-events-none bg-[#050505]">
-          <Canvas camera={{ position: [0, 2, 10], fov: 50 }} dpr={[1, 1.5]} gl={{ powerPreference: "high-performance", antialias: false }}>
+          <Canvas camera={{ position: [0, 2, 10], fov: 50 }} dpr={isMobile ? [1, 1] : [1, 1.5]} gl={{ powerPreference: "high-performance", antialias: false }}>
             <Suspense fallback={null}>
-              <BloodGrid isBooting={isBooting} />
+               <BloodGrid isBooting={isBooting} isMobile={isMobile} />
             </Suspense>
           </Canvas>
         </div>
@@ -622,169 +648,169 @@ export default function CrimsonAnimatedPortfolio() {
         <LowPowerBackground />
       )}
 
-      <div className="fixed inset-0 scanlines z-[100] mix-blend-overlay opacity-30 pointer-events-none" />
+      <div className="fixed inset-0 scanlines z-[100] md:mix-blend-overlay opacity-20 md:opacity-30 pointer-events-none" />
 
       <main className="relative z-20 w-full text-white selection:bg-[#FF003C] selection:text-white pb-24 overflow-hidden">
-
+        
         <nav className="fixed top-0 left-0 w-full px-6 md:px-12 py-6 flex justify-between items-center z-50 pointer-events-none">
-          <div className="flex flex-col pointer-events-auto">
-            <span className="font-display text-4xl tracking-widest leading-none drop-shadow-[0_0_10px_#FF003C]">Mukul.CV</span>
-          </div>
-          <div className="flex gap-4 pointer-events-auto">
-            <button
-              onClick={() => setVfxEnabled(!vfxEnabled)}
-              className="interactive font-mono text-xs text-white border border-white/30 bg-[#0A0A0A]/80 backdrop-blur-md px-4 py-3 hover:border-[#FF003C] transition-colors cut-corner-reverse hidden md:block"
-            >
-              VFX: {vfxEnabled ? "ON" : "OFF"}
-            </button>
-            <div className="font-mono text-xs text-white border border-[#FF003C] bg-[#0A0A0A]/80 backdrop-blur-md px-6 py-3 hidden md:flex items-center gap-3 shadow-[0_0_20px_rgba(255,0,60,0.3)] cut-corner-reverse">
-              <span className="w-2 h-2 bg-[#FF003C] animate-pulse" /> {vfxEnabled ? "ONLINE" : "LOW_POWER"}
-            </div>
-          </div>
+           <div className="flex flex-col pointer-events-auto">
+             <span className="font-display text-3xl md:text-4xl tracking-widest leading-none drop-shadow-[0_0_10px_#FF003C]">Mukul.CV</span>
+           </div>
+           <div className="flex gap-4 pointer-events-auto">
+             <button 
+               onClick={() => setVfxEnabled(!vfxEnabled)}
+               className="interactive font-mono text-xs text-white border border-white/30 bg-[#0A0A0A]/95 md:bg-[#0A0A0A]/80 md:backdrop-blur-md px-4 py-3 hover:border-[#FF003C] transition-colors cut-corner-reverse hidden md:block"
+             >
+               VFX: {vfxEnabled ? "ON" : "OFF"}
+             </button>
+             <div className="font-mono text-xs text-white border border-[#FF003C] bg-[#0A0A0A]/95 md:bg-[#0A0A0A]/80 md:backdrop-blur-md px-4 md:px-6 py-3 flex items-center gap-2 md:gap-3 shadow-[0_0_20px_rgba(255,0,60,0.3)] cut-corner-reverse">
+               <span className="w-2 h-2 bg-[#FF003C] animate-pulse" /> <span className="hidden md:inline">{vfxEnabled ? "ONLINE" : "LOW_POWER"}</span><span className="md:hidden">SYS_RDY</span>
+             </div>
+           </div>
         </nav>
 
-        <section className="min-h-screen flex flex-col justify-center px-[6vw] md:px-[10vw] pt-20">
+        <section className="min-h-screen flex flex-col justify-center px-6 md:px-[10vw] pt-24 md:pt-20">
           <div className="w-full max-w-screen-2xl mx-auto">
-
-            <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="mb-8 inline-flex items-center gap-3 bg-[#0A0A0A]/80 backdrop-blur-md border border-[#FF003C]/50 px-6 py-2 cut-corner shadow-[0_0_15px_rgba(255,0,60,0.3)]">
-              <Gamepad2 className="text-[#FF003C]" size={20} />
-              <span className="font-mono text-sm text-white/80 tracking-widest">Full Stack Developer</span>
+            
+            <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="mb-6 md:mb-8 inline-flex items-center gap-3 bg-[#0A0A0A]/95 md:bg-[#0A0A0A]/80 md:backdrop-blur-md border border-[#FF003C]/50 px-4 md:px-6 py-2 cut-corner shadow-[0_0_15px_rgba(255,0,60,0.3)]">
+              <Gamepad2 className="text-[#FF003C]" size={16} />
+              <span className="font-mono text-xs md:text-sm text-white/80 tracking-widest">Full Stack Developer</span>
             </motion.div>
-
+            
             <div className="flex flex-col">
               <RevealText>
-                <h1 className="font-display text-[18vw] md:text-[14vw] text-white drop-shadow-[0_10px_30px_rgba(255,0,60,0.5)] leading-none">
+                <h1 className="font-display text-7xl md:text-[14vw] text-white drop-shadow-[0_10px_30px_rgba(255,0,60,0.5)] leading-none">
                   {!isBooting ? <CyberDecodeText text="MUKUL" delay={300} /> : "MUKUL"}
                 </h1>
               </RevealText>
               <RevealText delay={0.2}>
-                <h1 className="font-display text-[18vw] md:text-[14vw] text-transparent [-webkit-text-stroke:2px_#FF003C] md:ml-[10vw] leading-none">
+                <h1 className="font-display text-7xl md:text-[14vw] text-transparent [-webkit-text-stroke:1px_#FF003C] md:[-webkit-text-stroke:2px_#FF003C] md:ml-[10vw] leading-none mt-2 md:mt-0">
                   {!isBooting ? <CyberDecodeText text="SINGH" delay={800} /> : "SINGH"}
                 </h1>
               </RevealText>
             </div>
 
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mt-12 border-t border-white/10 pt-12">
-              <p className="font-mono text-lg md:text-2xl text-white/70 max-w-2xl leading-relaxed border-l-4 border-[#FF003C] pl-6 bg-[#0A0A0A]/40 backdrop-blur-sm py-4">
-                &gt; About:- <span className="text-white font-bold">Tech Enthusiast</span><br />
-                &gt; Motive <span className="text-white font-bold">Learning through the Process</span><br />
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12 mt-8 md:mt-12 border-t border-white/10 pt-8 md:pt-12">
+              <p className="font-mono text-base md:text-2xl text-white/70 max-w-2xl leading-relaxed border-l-4 border-[#FF003C] pl-4 md:pl-6 bg-[#0A0A0A]/80 md:bg-[#0A0A0A]/40 md:backdrop-blur-sm py-3 md:py-4">
+                &gt; About:- <span className="text-white font-bold">Tech Enthusiast</span><br/>
+                &gt; Motive <span className="text-white font-bold">Learning through the Process</span><br/>
                 &gt; MISSION:<span className="text-white font-bold"> Construct flawless digital systems</span>
               </p>
 
-              <div className="flex flex-wrap gap-6">
-                <a href="#quests" className="interactive font-display text-3xl tracking-widest bg-[#FF003C] text-white px-12 py-4 cut-corner hover:bg-white hover:text-black transition-colors shadow-[0_0_30px_rgba(255,0,60,0.4)]">
-                  Projects -&gt;
-                </a>
+              <div className="flex flex-wrap gap-4 md:gap-6 w-full md:w-auto">
+                 <a href="#quests" className="interactive font-display text-2xl md:text-3xl tracking-widest bg-[#FF003C] text-white px-8 md:px-12 py-3 md:py-4 cut-corner hover:bg-white hover:text-black transition-colors shadow-[0_0_30px_rgba(255,0,60,0.4)] text-center w-full md:w-auto">
+                   Projects -&gt;
+                 </a>
               </div>
             </motion.div>
 
           </div>
         </section>
 
-        <section className="py-8 bg-[#FF003C] border-y-4 border-[#050505] shadow-[0_0_50px_rgba(255,0,60,0.8)] overflow-hidden rotate-1 scale-105 my-12 z-20 relative">
-          <div className="animate-marquee-forward gap-16 items-center">
+        <section className="py-6 md:py-8 bg-[#FF003C] border-y-4 border-[#050505] shadow-[0_0_50px_rgba(255,0,60,0.8)] overflow-hidden rotate-1 scale-105 my-8 md:my-12 z-20 relative">
+          <div className="animate-marquee-forward gap-8 md:gap-16 items-center">
             {[...Array(4)].map((_, idx) => (
-              <div key={idx} className="flex gap-16 items-center">
-                <span className="font-display text-4xl md:text-5xl text-black uppercase tracking-widest">⭐ 5-STAR C++</span>
-                <span className="font-mono text-3xl text-black/30">///</span>
-                <span className="font-display text-4xl md:text-5xl text-white uppercase tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">400+ Problem Solved Across Platforms</span>
-                <span className="font-mono text-3xl text-black/30">///</span>
-                <span className="font-display text-4xl md:text-5xl text-black uppercase tracking-widest">⭐ 5-STAR PYTHON</span>
-                <span className="font-mono text-3xl text-black/30">///</span>
+              <div key={idx} className="flex gap-8 md:gap-16 items-center">
+                <span className="font-display text-2xl md:text-5xl text-black uppercase tracking-widest whitespace-nowrap">⭐ 5-STAR C++</span>
+                <span className="font-mono text-xl md:text-3xl text-black/30">///</span>
+                <span className="font-display text-2xl md:text-5xl text-white uppercase tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] whitespace-nowrap">400+ Problem Solved Across Platforms</span>
+                <span className="font-mono text-xl md:text-3xl text-black/30">///</span>
+                <span className="font-display text-2xl md:text-5xl text-black uppercase tracking-widest whitespace-nowrap">⭐ 5-STAR PYTHON</span>
+                <span className="font-mono text-xl md:text-3xl text-black/30">///</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="py-32 px-[6vw] md:px-[10vw] relative z-10">
-          <div className="mb-20 border-b border-white/10 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <section className="py-20 md:py-32 px-6 md:px-[10vw] relative z-10">
+          <div className="mb-12 md:mb-20 border-b border-white/10 pb-6 md:pb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
             <div>
-              <RevealText><h2 className="font-display text-7xl md:text-8xl text-white tracking-wider">01 // TECH STACK</h2></RevealText>
-              <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-2">My Technology Stack</p>
+              <RevealText><h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">01 // TECH STACK</h2></RevealText>
+              <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2">My Technology Stack</p>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-screen-2xl mx-auto">
-
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-screen-2xl mx-auto">
+            
             <TiltCard className="md:col-span-2" floatDelay={0}>
-              <div className="flex items-center gap-6 mb-8">
-                <div className="p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Layers className="text-[#FF003C]" size={40} /></div>
-                <h3 className="font-display text-5xl tracking-widest text-white">FRONTEND</h3>
-              </div>
-              <p className="font-mono text-white/60 mb-10 leading-relaxed text-lg">Pixel-perfect, Responsive layouts and SEO-optimized structures.</p>
-              <div className="flex flex-wrap gap-3">
-                {['REACTJS', 'TAILWIND', 'HTML/CSS', 'JAVASCRIPT', 'EJS'].map(s => (
-                  <span key={s} className="px-5 py-3 bg-[#050505] border border-white/20 font-mono text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
-                ))}
-              </div>
+               <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
+                 <div className="p-3 md:p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Layers className="text-[#FF003C] w-8 h-8 md:w-10 md:h-10" /></div>
+                 <h3 className="font-display text-4xl md:text-5xl tracking-widest text-white">FRONTEND</h3>
+               </div>
+               <p className="font-mono text-white/60 mb-8 md:mb-10 leading-relaxed text-base md:text-lg">Pixel-perfect, Responsive layouts and SEO-optimized structures.</p>
+               <div className="flex flex-wrap gap-2 md:gap-3">
+                 {['REACTJS', 'TAILWIND', 'HTML/CSS', 'JAVASCRIPT', 'EJS'].map(s => (
+                   <span key={s} className="px-3 py-2 md:px-5 md:py-3 bg-[#050505] border border-white/20 font-mono text-xs md:text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
+                 ))}
+               </div>
             </TiltCard>
 
             <TiltCard floatDelay={1}>
-              <div className="flex items-center gap-6 mb-8">
-                <div className="p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Database className="text-[#FF003C]" size={40} /></div>
-                <h3 className="font-display text-5xl tracking-widest text-white">BACKEND</h3>
-              </div>
-              <p className="font-mono text-white/60 mb-10 leading-relaxed text-lg">Robust server data logic and management.</p>
-              <div className="flex flex-wrap gap-3">
-                {['NODE.JS', 'EXPRESS.JS', 'MONGODB', 'MYSQL', 'POSTGRESQL'].map(s => (
-                  <span key={s} className="px-5 py-3 bg-[#050505] border border-white/20 font-mono text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
-                ))}
-              </div>
+               <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
+                 <div className="p-3 md:p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Database className="text-[#FF003C] w-8 h-8 md:w-10 md:h-10" /></div>
+                 <h3 className="font-display text-4xl md:text-5xl tracking-widest text-white">BACKEND</h3>
+               </div>
+               <p className="font-mono text-white/60 mb-8 md:mb-10 leading-relaxed text-base md:text-lg">Robust server data logic and management.</p>
+               <div className="flex flex-wrap gap-2 md:gap-3">
+                 {['NODE.JS', 'EXPRESS.JS', 'MONGODB', 'MYSQL', 'POSTGRESQL'].map(s => (
+                   <span key={s} className="px-3 py-2 md:px-5 md:py-3 bg-[#050505] border border-white/20 font-mono text-xs md:text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
+                 ))}
+               </div>
             </TiltCard>
 
-            <TiltCard className="md:col-span-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-12 border-l-[8px] border-l-[#FF003C]" floatDelay={2}>
-              <div className="max-w-2xl">
-                <div className="flex items-center gap-6 mb-8">
-                  <div className="p-4 bg-white/5 border border-white/20 cut-corner"><Code2 className="text-white" size={40} /></div>
-                  <h3 className="font-display text-5xl tracking-widest text-white">CORE LOGIC</h3>
-                </div>
-                <p className="font-mono text-white/60 leading-relaxed text-lg">Competitive programming, algorithm optimization, and memory management.</p>
-              </div>
-              <div className="flex flex-wrap gap-4 md:justify-end">
-                {['C', 'C#', 'C++', 'PYTHON'].map(s => (
-                  <span key={s} className="px-8 py-4 bg-white text-black font-display text-3xl tracking-widest cut-corner shadow-[0_0_20px_rgba(255,255,255,0.2)]">{s}</span>
-                ))}
-              </div>
+            <TiltCard className="md:col-span-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 md:gap-12 border-l-[4px] md:border-l-[8px] border-l-[#FF003C]" floatDelay={2}>
+               <div className="max-w-2xl">
+                 <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
+                   <div className="p-3 md:p-4 bg-white/5 border border-white/20 cut-corner"><Code2 className="text-white w-8 h-8 md:w-10 md:h-10" /></div>
+                   <h3 className="font-display text-4xl md:text-5xl tracking-widest text-white">CORE LOGIC</h3>
+                 </div>
+                 <p className="font-mono text-white/60 leading-relaxed text-base md:text-lg">Competitive programming, algorithm optimization, and memory management.</p>
+               </div>
+               <div className="flex flex-wrap gap-3 md:gap-4 md:justify-end">
+                 {['C', 'C#', 'C++', 'PYTHON'].map(s => (
+                   <span key={s} className="px-6 py-3 md:px-8 md:py-4 bg-white text-black font-display text-xl md:text-3xl tracking-widest cut-corner shadow-[0_0_20px_rgba(255,255,255,0.2)]">{s}</span>
+                 ))}
+               </div>
             </TiltCard>
 
           </div>
         </section>
 
-        <section id="quests" className="py-32 px-[6vw] md:px-[10vw]">
-          <div className="mb-24 border-b border-white/10 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <section id="quests" className="py-20 md:py-32 px-6 md:px-[10vw]">
+          <div className="mb-16 md:mb-24 border-b border-white/10 pb-6 md:pb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
             <div>
-              <RevealText><h2 className="font-display text-6xl md:text-8xl text-white tracking-wider">02 // Projects</h2></RevealText>
-              <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-2">Digital Architecture Implementations</p>
+              <RevealText><h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">02 // Projects</h2></RevealText>
+              <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2">Digital Architecture Implementations</p>
             </div>
           </div>
-
-          <div className="flex flex-col gap-32 max-w-screen-2xl mx-auto">
-
+          
+          <div className="flex flex-col gap-16 md:gap-32 max-w-screen-2xl mx-auto">
+            
             <TiltCard className="p-0 border-none bg-transparent hover:border-transparent hover:shadow-none" floatDelay={0}>
               <div className="flex flex-col lg:flex-row gap-0 group bg-[#0A0A0A] border border-[#FF003C]/30 cut-corner overflow-hidden">
-                <div className="w-full lg:w-1/2 h-[400px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 lg:border-r border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000')] bg-cover bg-center opacity-20 mix-blend-luminosity grayscale group-hover:scale-110 group-hover:opacity-50 transition-all duration-700" />
+                <div className="w-full lg:w-1/2 h-[300px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 lg:border-r border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000')] bg-cover bg-center opacity-40 md:opacity-20 md:mix-blend-luminosity grayscale md:group-hover:scale-110 md:group-hover:opacity-50 transition-all duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
-                  <MonitorSmartphone className="text-[#FF003C] w-32 h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,0,60,0.5)] group-hover:scale-110 transition-transform duration-500" />
+                  <MonitorSmartphone className="text-[#FF003C] w-20 h-20 md:w-32 md:h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,0,60,0.5)] md:group-hover:scale-110 transition-transform duration-500" />
                 </div>
-
-                <div className="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                  <span className="font-mono text-[#FF003C] text-xs border border-[#FF003C] px-4 py-2 tracking-widest bg-[#FF003C]/10 cut-corner w-fit mb-6">AUG 2025</span>
-                  <h3 className="font-display text-5xl md:text-6xl text-white tracking-widest mb-6 leading-none">APPLE INTERFACE CLONE</h3>
-                  <p className="font-mono text-white/60 text-lg leading-relaxed mb-10">
+                
+                <div className="w-full lg:w-1/2 p-6 md:p-12 flex flex-col justify-center">
+                  <span className="font-mono text-[#FF003C] text-[10px] md:text-xs border border-[#FF003C] px-3 py-1 md:px-4 md:py-2 tracking-widest bg-[#FF003C]/10 cut-corner w-fit mb-4 md:mb-6">AUG 2025</span>
+                  <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-4 md:mb-6 leading-none">APPLE INTERFACE CLONE</h3>
+                  <p className="font-mono text-white/60 text-sm md:text-lg leading-relaxed mb-6 md:mb-10">
                     Highly accurate clone replicating the design and layout of the original Apple site. Built with strict SEO protocols, meta-tag optimization, and responsive logic.
                   </p>
-                  <div className="flex flex-wrap gap-3 mb-10 border-l-2 border-[#FF003C] pl-4">
-                    <span className="font-mono text-sm text-white/80 uppercase">► HTML/CSS</span>
-                    <span className="font-mono text-sm text-white/80 uppercase">► SEO ARCHITECTURE</span>
-                    <span className="font-mono text-sm text-white/80 uppercase">► RESPONSIVE UI</span>
+                  <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 border-l-2 border-[#FF003C] pl-3 md:pl-4">
+                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► HTML/CSS</span>
+                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► SEO ARCHITECTURE</span>
+                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► RESPONSIVE UI</span>
                   </div>
-                  <div className="flex gap-6 mt-auto">
-                    <a href="#" className="font-display text-3xl tracking-widest bg-[#FF003C] text-white px-8 py-3 hover:bg-white hover:text-black transition-colors cut-corner interactive flex items-center gap-2">
-                      <ExternalLink size={24} /> PREVIEW
+                  <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-auto">
+                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-[#FF003C] text-white px-6 py-3 hover:bg-white hover:text-black transition-colors cut-corner interactive flex justify-center items-center gap-2">
+                      <ExternalLink size={20} className="md:w-6 md:h-6" /> PREVIEW
                     </a>
-                    <a href="#" className="font-display text-3xl tracking-widest bg-transparent border border-white text-white px-8 py-3 hover:bg-white/10 transition-colors cut-corner interactive flex items-center gap-2">
-                      <Github size={24} /> GITHUB
+                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-transparent border border-white text-white px-6 py-3 hover:bg-white/10 transition-colors cut-corner interactive flex justify-center items-center gap-2">
+                      <Github size={20} className="md:w-6 md:h-6" /> GITHUB
                     </a>
                   </div>
                 </div>
@@ -793,29 +819,29 @@ export default function CrimsonAnimatedPortfolio() {
 
             <TiltCard className="p-0 border-none bg-transparent hover:border-transparent hover:shadow-none" floatDelay={1.5}>
               <div className="flex flex-col lg:flex-row-reverse gap-0 group bg-[#0A0A0A] border border-[#FF003C]/30 cut-corner-reverse overflow-hidden">
-                <div className="w-full lg:w-1/2 h-[400px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 lg:border-l border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000')] bg-cover bg-center opacity-20 mix-blend-luminosity grayscale group-hover:scale-110 group-hover:opacity-50 transition-all duration-700" />
+                <div className="w-full lg:w-1/2 h-[300px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 lg:border-l border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000')] bg-cover bg-center opacity-40 md:opacity-20 md:mix-blend-luminosity grayscale md:group-hover:scale-110 md:group-hover:opacity-50 transition-all duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
-                  <MonitorSmartphone className="text-white w-32 h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.5)] group-hover:scale-110 transition-transform duration-500" />
+                  <MonitorSmartphone className="text-white w-20 h-20 md:w-32 md:h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.5)] md:group-hover:scale-110 transition-transform duration-500" />
                 </div>
-
-                <div className="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                  <span className="font-mono text-white text-xs border border-white px-4 py-2 tracking-widest bg-white/10 cut-corner w-fit mb-6">JUN 2023</span>
-                  <h3 className="font-display text-5xl md:text-6xl text-white tracking-widest mb-6 leading-none">NGO PHILANTHROPIC PORTAL</h3>
-                  <p className="font-mono text-white/60 text-lg leading-relaxed mb-10">
+                
+                <div className="w-full lg:w-1/2 p-6 md:p-12 flex flex-col justify-center">
+                  <span className="font-mono text-white text-[10px] md:text-xs border border-white px-3 py-1 md:px-4 md:py-2 tracking-widest bg-white/10 cut-corner w-fit mb-4 md:mb-6">JUN 2023</span>
+                  <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-4 md:mb-6 leading-none">NGO PHILANTHROPIC PORTAL</h3>
+                  <p className="font-mono text-white/60 text-sm md:text-lg leading-relaxed mb-6 md:mb-10">
                     Engineered a seamless cross-device donation platform. Designed a structured content hierarchy with intuitive calls-to-action to maximize user engagement and conversion routing.
                   </p>
-                  <div className="flex flex-wrap gap-3 mb-10 border-l-2 border-white pl-4">
-                    <span className="font-mono text-sm text-white/80 uppercase">► FRONTEND UX</span>
-                    <span className="font-mono text-sm text-white/80 uppercase">► CROSS-DEVICE</span>
-                    <span className="font-mono text-sm text-white/80 uppercase">► CONVERSIONS</span>
+                  <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 border-l-2 border-white pl-3 md:pl-4">
+                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► FRONTEND UX</span>
+                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► CROSS-DEVICE</span>
+                    <span className="font-mono text-xs md:text-sm text-white/80 uppercase">► CONVERSIONS</span>
                   </div>
-                  <div className="flex gap-6 mt-auto">
-                    <a href="#" className="font-display text-3xl tracking-widest bg-white text-black px-8 py-3 hover:bg-[#FF003C] hover:text-white transition-colors cut-corner interactive flex items-center gap-2">
-                      <ExternalLink size={24} /> PREVIEW
+                  <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-auto">
+                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-white text-black px-6 py-3 hover:bg-[#FF003C] hover:text-white transition-colors cut-corner interactive flex justify-center items-center gap-2">
+                      <ExternalLink size={20} className="md:w-6 md:h-6" /> PREVIEW
                     </a>
-                    <a href="#" className="font-display text-3xl tracking-widest bg-transparent border border-white text-white px-8 py-3 hover:bg-white/10 transition-colors cut-corner interactive flex items-center gap-2">
-                      <Github size={24} /> GITHUB
+                    <a href="#" className="font-display text-2xl md:text-3xl tracking-widest bg-transparent border border-white text-white px-6 py-3 hover:bg-white/10 transition-colors cut-corner interactive flex justify-center items-center gap-2">
+                      <Github size={20} className="md:w-6 md:h-6" /> GITHUB
                     </a>
                   </div>
                 </div>
@@ -825,76 +851,74 @@ export default function CrimsonAnimatedPortfolio() {
           </div>
         </section>
 
-        {/* --- 3. LORE (TRAINING & EDUCATION) --- */}
-        <section className="py-32 px-[6vw] md:px-[10vw] relative">
-          <div className="mb-24 border-b border-white/10 pb-8">
-            <RevealText><h2 className="font-display text-6xl md:text-8xl text-white tracking-wider">03 // LORE & STATS</h2></RevealText>
-            <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-2">Academic History Records</p>
+        <section className="py-20 md:py-32 px-6 md:px-[10vw] relative">
+          <div className="mb-16 md:mb-24 border-b border-white/10 pb-6 md:pb-8">
+            <RevealText><h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">03 // LORE & STATS</h2></RevealText>
+            <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2">Academic History Records</p>
           </div>
 
-          <div className="max-w-screen-2xl mx-auto flex flex-col gap-10">
-
-            <TiltCard className="border-l-[8px] border-l-[#FF003C] !p-0" floatDelay={0}>
-              <div className="flex flex-col lg:flex-row items-stretch">
-                <div className="p-10 md:p-12 bg-[#FF003C]/10 border-r border-[#FF003C]/30 flex flex-col justify-center w-full lg:w-2/5 relative overflow-hidden">
-                  <Cpu className="text-[#FF003C] opacity-10 absolute -right-10 -bottom-10 w-64 h-64" />
-                  <h3 className="font-display text-5xl md:text-6xl text-white tracking-widest mb-4 relative z-10 leading-none">INTENSIVE DSA TRAINING (C++)</h3>
-                  <p className="font-mono text-[#FF003C] text-sm tracking-widest relative z-10 border border-[#FF003C] px-3 py-1 w-fit bg-[#FF003C]/10 cut-corner">JUN 23 - JUL 23</p>
-                </div>
-
-                <div className="p-10 md:p-12 font-mono text-white/70 space-y-6 text-lg w-full lg:w-3/5">
-                  <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Mastered core Data Structures and Algorithms using C++.</p>
-                  <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Engineered optimal solutions for competitive programming challenges.</p>
-                  <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Focused heavily on reducing Big-O time and space complexity.</p>
-                </div>
-              </div>
+          <div className="max-w-screen-2xl mx-auto flex flex-col gap-8 md:gap-10">
+            
+            <TiltCard className="border-l-[4px] md:border-l-[8px] border-l-[#FF003C] !p-0" floatDelay={0}>
+               <div className="flex flex-col lg:flex-row items-stretch">
+                 <div className="p-6 md:p-12 bg-[#FF003C]/10 border-b lg:border-b-0 lg:border-r border-[#FF003C]/30 flex flex-col justify-center w-full lg:w-2/5 relative overflow-hidden">
+                   <Cpu className="text-[#FF003C] opacity-10 absolute -right-4 -bottom-4 md:-right-10 md:-bottom-10 w-32 h-32 md:w-64 md:h-64" />
+                   <h3 className="font-display text-4xl md:text-6xl text-white tracking-widest mb-3 md:mb-4 relative z-10 leading-none">INTENSIVE DSA TRAINING</h3>
+                   <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-widest relative z-10 border border-[#FF003C] px-2 py-1 md:px-3 md:py-1 w-fit bg-[#FF003C]/10 cut-corner">JUN 23 - JUL 23</p>
+                 </div>
+                 
+                 <div className="p-6 md:p-12 font-mono text-white/70 space-y-4 md:space-y-6 text-sm md:text-lg w-full lg:w-3/5">
+                   <p className="flex gap-3 md:gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Mastered core Data Structures and Algorithms using C++.</p>
+                   <p className="flex gap-3 md:gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Engineered optimal solutions for competitive programming challenges.</p>
+                   <p className="flex gap-3 md:gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Focused heavily on reducing Big-O time and space complexity.</p>
+                 </div>
+               </div>
             </TiltCard>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <TiltCard className="flex flex-col justify-between !p-10" floatDelay={1}>
-                <div>
-                  <span className="font-mono text-white/30 text-sm tracking-widest uppercase mb-6 block">AUG 2023 - PRESENT</span>
-                  <h4 className="font-display text-5xl text-white tracking-widest mb-2">LOVELY PROFESSIONAL UNIV.</h4>
-                  <p className="font-mono text-white/50 text-lg mb-12">B.Tech - Computer Science</p>
-                </div>
-                <div className="bg-[#050505] border border-white/20 p-6 cut-corner w-fit shadow-[0_0_15px_rgba(255,0,60,0.2)]">
-                  <p className="font-display text-6xl text-[#FF003C] tracking-widest leading-none">6.63 <span className="text-lg text-white/40">CGPA</span></p>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+              <TiltCard className="flex flex-col justify-between !p-6 md:!p-10" floatDelay={1}>
+                 <div>
+                   <span className="font-mono text-white/30 text-xs md:text-sm tracking-widest uppercase mb-4 md:mb-6 block">AUG 2023 - PRESENT</span>
+                   <h4 className="font-display text-4xl md:text-5xl text-white tracking-widest mb-2">LOVELY PROFESSIONAL UNIV.</h4>
+                   <p className="font-mono text-white/50 text-base md:text-lg mb-8 md:mb-12">B.Tech - Computer Science</p>
+                 </div>
+                 <div className="bg-[#050505] border border-white/20 p-4 md:p-6 cut-corner w-fit shadow-[0_0_15px_rgba(255,0,60,0.2)]">
+                   <p className="font-display text-5xl md:text-6xl text-[#FF003C] tracking-widest leading-none">6.63 <span className="text-sm md:text-lg text-white/40">CGPA</span></p>
+                 </div>
               </TiltCard>
 
-              <div className="flex flex-col gap-10">
-                <TiltCard className="!p-8" floatDelay={1.5}>
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h4 className="font-display text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
-                      <p className="font-mono text-sm text-white/50">Intermediate (PCM) | 2022-2023</p>
-                    </div>
-                    <span className="font-display text-5xl text-white">68.4%</span>
-                  </div>
+              <div className="flex flex-col gap-8 md:gap-10">
+                <TiltCard className="!p-6 md:!p-8" floatDelay={1.5}>
+                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-2 md:mb-6">
+                     <div>
+                       <h4 className="font-display text-3xl md:text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
+                       <p className="font-mono text-xs md:text-sm text-white/50">Intermediate (PCM) | 2022-2023</p>
+                     </div>
+                     <span className="font-display text-4xl md:text-5xl text-white">68.4%</span>
+                   </div>
                 </TiltCard>
-                <TiltCard className="!p-8 border-l-4 border-l-white/20" floatDelay={2}>
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h4 className="font-display text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
-                      <p className="font-mono text-sm text-white/50">Matriculation | 2020-2021</p>
-                    </div>
-                    <span className="font-display text-5xl text-white">83.0%</span>
-                  </div>
+                <TiltCard className="!p-6 md:!p-8 border-l-[4px] border-l-white/20" floatDelay={2}>
+                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-2 md:mb-6">
+                     <div>
+                       <h4 className="font-display text-3xl md:text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
+                       <p className="font-mono text-xs md:text-sm text-white/50">Matriculation | 2020-2021</p>
+                     </div>
+                     <span className="font-display text-4xl md:text-5xl text-white">83.0%</span>
+                   </div>
                 </TiltCard>
               </div>
             </div>
-
+            
           </div>
         </section>
 
-        {/* --- 04 // BADGES (NEW MARQUEE VERSION) --- */}
-        <section className="py-32 relative overflow-hidden">
-          <div className="px-[6vw] md:px-[10vw] mb-12 border-b border-white/10 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <section className="py-20 md:py-32 relative overflow-hidden">
+          <div className="px-6 md:px-[10vw] mb-8 md:mb-12 border-b border-white/10 pb-6 md:pb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
             <div>
               <RevealText>
-                <h2 className="font-display text-6xl md:text-8xl text-white tracking-wider">04 // BADGES</h2>
+                <h2 className="font-display text-5xl md:text-8xl text-white tracking-wider">04 // BADGES</h2>
               </RevealText>
-              <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-2">
+              <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2">
                 Verified Achievement Loot Stream
               </p>
             </div>
@@ -902,76 +926,88 @@ export default function CrimsonAnimatedPortfolio() {
               <span className="w-2 h-2 bg-[#FF003C] animate-ping" /> SCROLLING_ARCHIVE_ACTIVE
             </div>
           </div>
-
+          
           <div className="relative">
-            {/* ROW 1: Moves Forward (Left) */}
-            <CertificateStream
-              items={certificates}
-              onSelect={setActiveItem}
+            <CertificateStream 
+              items={certificates} 
+              onSelect={setActiveItem} 
             />
 
-            {/* ROW 2: Moves Reverse (Right) */}
-            <CertificateStream
-              items={[...certificates].reverse()}
-              reverse={true}
-              onSelect={setActiveItem}
+            <CertificateStream 
+              items={[...certificates].reverse()} 
+              reverse={true} 
+              onSelect={setActiveItem} 
             />
 
-            {/* Side Masks for that "Fade In/Out" look */}
-            <div className="absolute inset-y-0 left-0 w-24 md:w-64 bg-gradient-to-r from-[#050505] to-transparent z-10 pointer-events-none" />
-            <div className="absolute inset-y-0 right-0 w-24 md:w-64 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 left-0 w-12 md:w-64 bg-gradient-to-r from-[#050505] to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-12 md:w-64 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
           </div>
 
-          <div className="mt-12 text-center">
-            <p className="font-mono text-[10px] text-white/20 tracking-[0.5em] uppercase">Click any badge to inspect metadata</p>
+          <div className="mt-8 md:mt-12 text-center">
+             <p className="font-mono text-[8px] md:text-[10px] text-white/20 tracking-[0.3em] md:tracking-[0.5em] uppercase">Click any badge to inspect metadata</p>
           </div>
         </section>
 
-        {/* --- 5. SAVE GAME (CONTACT) --- */}
-        <section id="save" className="py-32 px-[6vw] md:px-[10vw] border-t-4 border-[#FF003C] bg-[#050505] relative z-10 overflow-hidden">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-t from-[#FF003C]/20 to-transparent pointer-events-none mix-blend-screen" />
-
-          <div className="mb-24 text-center">
-            <RevealText><h2 className="font-display text-7xl md:text-[8vw] text-white tracking-widest leading-none drop-shadow-[0_0_40px_rgba(255,0,60,0.4)]">Contact Me?</h2></RevealText>
-            <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-6">Transmit Data.....</p>
+        <section id="save" className="py-20 md:py-32 px-6 md:px-[10vw] border-t-4 border-[#FF003C] bg-[#050505] relative z-10 overflow-hidden">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] md:h-[600px] bg-gradient-to-t from-[#FF003C]/20 to-transparent pointer-events-none md:mix-blend-screen" />
+          
+          <div className="mb-16 md:mb-24 text-center">
+             <RevealText><h2 className="font-display text-5xl md:text-[8vw] text-white tracking-widest leading-none drop-shadow-[0_0_20px_rgba(255,0,60,0.4)] md:drop-shadow-[0_0_40px_rgba(255,0,60,0.4)]">Contact Me?</h2></RevealText>
+             <p className="font-mono text-[#FF003C] text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-4 md:mt-6">Transmit Data.....</p>
           </div>
-
-          <div className="flex flex-col lg:flex-row gap-20 max-w-screen-2xl mx-auto relative z-10">
-
-            <div className="w-full lg:w-1/2 bg-[#0A0A0A] border border-[#FF003C]/50 p-8 md:p-12 cut-corner shadow-[0_0_50px_rgba(255,0,60,0.15)] relative group">
+          
+          <div className="flex flex-col lg:flex-row gap-12 md:gap-20 max-w-screen-2xl mx-auto relative z-10">
+            
+            <div className="w-full lg:w-1/2 bg-[#0A0A0A] border border-[#FF003C]/50 p-6 md:p-12 cut-corner shadow-[0_0_30px_rgba(255,0,60,0.1)] md:shadow-[0_0_50px_rgba(255,0,60,0.15)] relative group">
               <TerminalContactForm />
             </div>
 
             <div className="w-full lg:w-1/2 flex flex-col justify-center">
-              <div className="mb-12 border-l-4 border-[#FF003C] pl-8 py-2">
-                <p className="font-mono text-xl md:text-2xl text-white/80 leading-relaxed">
-                  Currently seeking new opportunities for <span className="text-[#FF003C] font-bold">engineering roles</span> and <span className="text-white font-bold"> collaborations. </span>.
+              <div className="mb-8 md:mb-12 border-l-4 border-[#FF003C] pl-4 md:pl-8 py-2">
+                <p className="font-mono text-base md:text-2xl text-white/80 leading-relaxed">
+                  Currently seeking new opportunities for <span className="text-[#FF003C] font-bold">engineering roles</span> and <span className="text-white font-bold"> collaborations. </span>
                 </p>
               </div>
-
-              <div className="flex flex-col gap-6">
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mukulsinghweb@gmail.com" target="_blank" rel="noopener noreferrer" className="bg-[#0A0A0A] border border-white/10 p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg">
-                  <div className="flex items-center gap-6">
-                    <Mail className="text-white/50 group-hover:text-[#FF003C] transition-colors" size={32} />
-                    <p className="font-mono text-sm md:text-lg text-white font-bold">mukulsinghweb@gmail.com</p>
+              
+              <div className="flex flex-col gap-4 md:gap-6">
+                <a 
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=mukulsinghweb@gmail.com"
+                  onClick={(e) => {
+                    if (isMobile) return;
+                    e.preventDefault();
+                    window.open(
+                      "https://mail.google.com/mail/?view=cm&fs=1&to=mukulsinghweb@gmail.com",
+                      "GmailCompose",
+                      "width=600,height=600,left=200,top=200,scrollbars=yes"
+                    );
+                  }}
+                  className="bg-[#0A0A0A] border border-white/10 p-6 md:p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg"
+                >
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <Mail className="text-white/50 md:group-hover:text-[#FF003C] transition-colors w-6 h-6 md:w-8 md:h-8" />
+                    <p className="font-mono text-xs md:text-lg text-white font-bold break-all">mukulsinghweb@gmail.com</p>
                   </div>
-                  <ArrowRight className="text-white/20 group-hover:text-[#FF003C] group-hover:translate-x-2 transition-transform" />
+                  <ArrowRight className="text-white/20 md:group-hover:text-[#FF003C] md:group-hover:translate-x-2 transition-transform w-5 h-5 md:w-6 md:h-6 flex-shrink-0 ml-2" />
                 </a>
 
-                <a href="tel:+917388600306" className="bg-[#0A0A0A] border border-white/10 p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg">
-                  <div className="flex items-center gap-6">
-                    <Phone className="text-white/50 group-hover:text-[#FF003C] transition-colors" size={32} />
+                <a 
+                  href="tel:+917388600306"
+                  data-lenis-prevent="true"
+                  className="bg-[#0A0A0A] border border-white/10 p-6 md:p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg"
+                >
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <Phone className="text-white/50 md:group-hover:text-[#FF003C] transition-colors w-6 h-6 md:w-8 md:h-8" />
                     <p className="font-mono text-sm md:text-lg text-white font-bold">+91 7388600306</p>
                   </div>
-                  <ArrowRight className="text-white/20 group-hover:text-[#FF003C] group-hover:translate-x-2 transition-transform" />
+                  <ArrowRight className="text-white/20 md:group-hover:text-[#FF003C] md:group-hover:translate-x-2 transition-transform w-5 h-5 md:w-6 md:h-6 flex-shrink-0 ml-2" />
                 </a>
 
-                <div className="flex gap-6 mt-4">
-                  <a href="https://linkedin.com/in/mukulsingh06" target="_blank" className="flex-1 bg-[#0077b5] border border-black p-6 flex items-center justify-center gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(0,119,181,0.4)]">
-                    <Linkedin size={28} /> <span className="font-display tracking-widest text-2xl pt-1">LINKEDIN</span>
+                <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-2 md:mt-4">
+                  <a href="https://linkedin.com/in/mukulsingh06" target="_blank" rel="noreferrer" className="flex-1 bg-[#0077b5] border border-black p-4 md:p-6 flex items-center justify-center gap-3 md:gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(0,119,181,0.4)]">
+                    <Linkedin className="w-5 h-5 md:w-7 md:h-7" /> <span className="font-display tracking-widest text-xl md:text-2xl pt-1">LINKEDIN</span>
                   </a>
-                  <a href="https://github.com/Mukulsingh06" target="_blank" className="flex-1 bg-white border border-black p-6 flex items-center justify-center gap-4 hover:bg-[#FF003C] hover:text-white text-black transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(255,255,255,0.4)]">
-                    <Github size={28} /> <span className="font-display tracking-widest text-2xl pt-1">GITHUB</span>
+                  <a href="https://github.com/Mukulsingh06" target="_blank" rel="noreferrer" className="flex-1 bg-white border border-black p-4 md:p-6 flex items-center justify-center gap-3 md:gap-4 hover:bg-[#FF003C] hover:text-white text-black transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+                    <Github className="w-5 h-5 md:w-7 md:h-7" /> <span className="font-display tracking-widest text-xl md:text-2xl pt-1">GITHUB</span>
                   </a>
                 </div>
               </div>
