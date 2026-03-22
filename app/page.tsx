@@ -939,7 +939,7 @@ export default function CrimsonAnimatedPortfolio() {
                 </a>
 
                 <div className="flex gap-6 mt-4">
-                  <a href="www.linkedin.com/in/mukulsingh06" target="_blank" className="flex-1 bg-[#0077b5] border border-black p-6 flex items-center justify-center gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(0,119,181,0.4)]">
+                  <a href="https://linkedin.com/in/mukulsingh06" target="_blank" className="flex-1 bg-[#0077b5] border border-black p-6 flex items-center justify-center gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(0,119,181,0.4)]">
                     <Linkedin size={28} /> <span className="font-display tracking-widest text-2xl pt-1">LINKEDIN</span>
                   </a>
                   <a href="https://github.com/Mukulsingh06" target="_blank" className="flex-1 bg-white border border-black p-6 flex items-center justify-center gap-4 hover:bg-[#FF003C] hover:text-white text-black transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(255,255,255,0.4)]">
