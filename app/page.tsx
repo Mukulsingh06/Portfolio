@@ -7,7 +7,7 @@ import { EffectComposer, Bloom, ChromaticAberration } from "@react-three/postpro
 import { BlendFunction } from "postprocessing";
 import { ReactLenis } from "lenis/react";
 import { motion, AnimatePresence, useTransform, useSpring, useMotionValue } from "framer-motion";
-import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, ExternalLink, Gamepad2, ArrowRight, ShieldAlert, Crosshair, MonitorSmartphone } from "lucide-react";
+import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, ExternalLink, Gamepad2, ArrowRight, ShieldAlert, Crosshair, MonitorSmartphone, Download } from "lucide-react";
 import * as THREE from "three";
 
 const GlobalStyles = () => (
@@ -330,7 +330,7 @@ const RevealText = ({ children, delay = 0 }: { children: React.ReactNode, delay?
       </motion.div>
     </div>
   );
-};
+}
 
 const ContinuousFloat = ({ children, delay = 0, isMobile }: { children: React.ReactNode, delay?: number, isMobile: boolean }) => {
   if (isMobile) return <>{children}</>;
@@ -614,11 +614,19 @@ export default function CrimsonAnimatedPortfolio() {
               </div>
               
               <div className="p-8 md:p-12 flex flex-col md:flex-row gap-12 items-stretch">
-                <div className="w-full md:w-1/2 h-48 md:h-auto border border-[#FF003C]/30 relative flex items-center justify-center overflow-hidden cut-corner">
-                  <img src={activeItem.img} alt="Cert" className="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-40 md:mix-blend-luminosity grayscale" />
-                  <div className="absolute inset-0 bg-[#FF003C] md:mix-blend-overlay opacity-30 md:opacity-50" />
-                  <Award size={80} className="text-white relative z-10 drop-shadow-[0_0_20px_#FF003C] md:w-[100px] md:h-[100px]" />
-                </div>
+                <a 
+                  href={`/certificates?id=${activeItem.id}&title=${encodeURIComponent(activeItem.title)}&img=${encodeURIComponent(activeItem.img)}&org=${encodeURIComponent(activeItem.org)}&date=${encodeURIComponent(activeItem.date)}&rarity=${encodeURIComponent(activeItem.rarity)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full md:w-1/2 h-48 md:h-auto border border-[#FF003C]/30 relative flex items-center justify-center overflow-hidden cut-corner interactive group cursor-pointer block"
+                >
+                  <img src={activeItem.img} alt="Cert" className="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-40 md:mix-blend-luminosity grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" />
+                  <div className="absolute inset-0 bg-[#FF003C] md:mix-blend-overlay opacity-30 md:opacity-50 group-hover:opacity-10 transition-opacity duration-500" />
+                  <Award size={80} className="text-white relative z-10 drop-shadow-[0_0_20px_#FF003C] md:w-[100px] md:h-[100px] group-hover:scale-125 transition-transform duration-500" />
+                  <div className="absolute top-4 right-4 bg-[#050505]/80 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm border border-[#FF003C]/50 z-20">
+                     <ExternalLink size={20} className="text-[#FF003C]" />
+                  </div>
+                </a>
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
                    <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity} ITEM</span>
                    <h3 className="font-display text-4xl md:text-6xl text-white mb-6 leading-none tracking-wide">{activeItem.title}</h3>
@@ -1003,6 +1011,9 @@ export default function CrimsonAnimatedPortfolio() {
                 </a>
 
                 <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-2 md:mt-4">
+                  <a href="/Mukul_Singh_Resume.pdf" download="Mukul_Singh_Resume.pdf" className="flex-1 bg-[#FF003C] border border-black p-4 md:p-6 flex items-center justify-center gap-3 md:gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(255,0,60,0.4)]">
+                    <Download className="w-5 h-5 md:w-7 md:h-7" /> <span className="font-display tracking-widest text-xl md:text-2xl pt-1">RESUME</span>
+                  </a>
                   <a href="https://linkedin.com/in/mukulsingh06" target="_blank" rel="noreferrer" className="flex-1 bg-[#0077b5] border border-black p-4 md:p-6 flex items-center justify-center gap-3 md:gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(0,119,181,0.4)]">
                     <Linkedin className="w-5 h-5 md:w-7 md:h-7" /> <span className="font-display tracking-widest text-xl md:text-2xl pt-1">LINKEDIN</span>
                   </a>
