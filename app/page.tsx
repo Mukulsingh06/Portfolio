@@ -904,8 +904,8 @@ export default function CrimsonAnimatedPortfolio() {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-t from-[#FF003C]/20 to-transparent pointer-events-none mix-blend-screen" />
           
           <div className="mb-24 text-center">
-             <RevealText><h2 className="font-display text-7xl md:text-[8vw] text-white tracking-widest leading-none drop-shadow-[0_0_40px_rgba(255,0,60,0.4)]">SAVE GAME?</h2></RevealText>
-             <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-6">Transmit Data to Architect</p>
+             <RevealText><h2 className="font-display text-7xl md:text-[8vw] text-white tracking-widest leading-none drop-shadow-[0_0_40px_rgba(255,0,60,0.4)]">Contact Me?</h2></RevealText>
+             <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-6">Transmit Data.....</p>
           </div>
           
           <div className="flex flex-col lg:flex-row gap-20 max-w-screen-2xl mx-auto relative z-10">
@@ -917,15 +917,15 @@ export default function CrimsonAnimatedPortfolio() {
             <div className="w-full lg:w-1/2 flex flex-col justify-center">
               <div className="mb-12 border-l-4 border-[#FF003C] pl-8 py-2">
                 <p className="font-mono text-xl md:text-2xl text-white/80 leading-relaxed">
-                  Currently seeking new party members for <span className="text-[#FF003C] font-bold">engineering roles</span> and <span className="text-white font-bold">co-op quests</span>.
+                  Currently seeking new opportunities for <span className="text-[#FF003C] font-bold">engineering roles</span> and <span className="text-white font-bold"> collaborations. </span>.
                 </p>
               </div>
               
               <div className="flex flex-col gap-6">
-                <a href="mailto:mukulsinghmeshew@gmail.com" className="bg-[#0A0A0A] border border-white/10 p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg">
+                <a href="mailto:mukulsinghweb@gmail.com" className="bg-[#0A0A0A] border border-white/10 p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg">
                   <div className="flex items-center gap-6">
                     <Mail className="text-white/50 group-hover:text-[#FF003C] transition-colors" size={32} />
-                    <p className="font-mono text-sm md:text-lg text-white font-bold">mukulsinghmeshew@gmail.com</p>
+                    <p className="font-mono text-sm md:text-lg text-white font-bold">mukulsinghweb@gmail.com</p>
                   </div>
                   <ArrowRight className="text-white/20 group-hover:text-[#FF003C] group-hover:translate-x-2 transition-transform" />
                 </a>
@@ -939,10 +939,10 @@ export default function CrimsonAnimatedPortfolio() {
                 </a>
 
                 <div className="flex gap-6 mt-4">
-                  <a href="http://www.linkedin.com/in/mukulsingho6" target="_blank" className="flex-1 bg-[#0077b5] border border-black p-6 flex items-center justify-center gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(0,119,181,0.4)]">
+                  <a href="www.linkedin.com/in/mukulsingh06" target="_blank" className="flex-1 bg-[#0077b5] border border-black p-6 flex items-center justify-center gap-4 hover:bg-white hover:text-black text-white transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(0,119,181,0.4)]">
                     <Linkedin size={28} /> <span className="font-display tracking-widest text-2xl pt-1">LINKEDIN</span>
                   </a>
-                  <a href="https://github.com/mukulsingho6" target="_blank" className="flex-1 bg-white border border-black p-6 flex items-center justify-center gap-4 hover:bg-[#FF003C] hover:text-white text-black transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+                  <a href="https://github.com/Mukulsingh06" target="_blank" className="flex-1 bg-white border border-black p-6 flex items-center justify-center gap-4 hover:bg-[#FF003C] hover:text-white text-black transition-all duration-300 cut-corner interactive shadow-[0_0_15px_rgba(255,255,255,0.4)]">
                     <Github size={28} /> <span className="font-display tracking-widest text-2xl pt-1">GITHUB</span>
                   </a>
                 </div>
