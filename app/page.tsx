@@ -2,12 +2,12 @@
 
 import { useEffect, useState, Suspense, useRef, useCallback } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Float, Grid, Sparkles } from "@react-three/drei";
+import { Float, Grid, Sparkles } from "@react-three/drei";
 import { EffectComposer, Bloom, ChromaticAberration } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { ReactLenis } from "lenis/react";
 import { motion, AnimatePresence, useTransform, useSpring, useMotionValue } from "framer-motion";
-import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, ExternalLink, Gamepad2, ArrowRight, ShieldAlert, Crosshair, MonitorSmartphone, Download, Briefcase } from "lucide-react";
+import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, ExternalLink, Gamepad2, ArrowRight, ShieldAlert, Crosshair, MonitorSmartphone, Download} from "lucide-react";
 import * as THREE from "three";
 
 const GlobalStyles = () => (
@@ -126,7 +126,7 @@ function GameplayPreloader({ onComplete }: { onComplete: () => void }) {
     >
       <div className="absolute top-10 left-10 text-[#FF003C] text-[10px] opacity-40">
         <p>BUILD_ID: 2026.03.20_MS</p>
-        <p>LOC: CHANDIGARH_NODE_01</p>
+        <p>LOC: NODE_01</p>
       </div>
       
       <div className="relative z-10 flex flex-col items-center">
