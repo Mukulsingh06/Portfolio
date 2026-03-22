@@ -11,7 +11,8 @@ import { Mail, Phone, Github, Linkedin, Code2, Database, Layers, X, Award, Cpu, 
 import * as THREE from "three";
 
 const GlobalStyles = () => (
-  <style dangerouslySetInnerHTML={{__html: `
+  <style dangerouslySetInnerHTML={{
+    __html: `
     @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Press+Start+2P&display=swap');
     
     .font-display { font-family: 'Teko', sans-serif; text-transform: uppercase; line-height: 0.9; }
@@ -103,29 +104,29 @@ function GameplayPreloader({ onComplete }: { onComplete: () => void }) {
         return p + Math.random() * 8;
       });
     }, 150);
-    
+
     return () => { clearInterval(logInterval); clearInterval(progInterval); };
   }, [onComplete]);
 
   return (
-    <motion.div 
-      exit={{ clipPath: "polygon(0 50%, 100% 50%, 100% 50%, 0 50%)", transition: { duration: 0.8, ease: "circIn" } }} 
+    <motion.div
+      exit={{ clipPath: "polygon(0 50%, 100% 50%, 100% 50%, 0 50%)", transition: { duration: 0.8, ease: "circIn" } }}
       className="fixed inset-0 z-[9999] bg-[#020202] flex flex-col justify-center items-center font-mono"
     >
       <div className="absolute top-10 left-10 text-[#FF003C] text-[10px] opacity-40">
         <p>BUILD_ID: 2026.03.20_MS</p>
         <p>LOC: CHANDIGARH_NODE_01</p>
       </div>
-      
+
       <div className="relative z-10 flex flex-col items-center">
-        <motion.div 
-          animate={{ opacity: [0.2, 1, 0.2] }} 
+        <motion.div
+          animate={{ opacity: [0.2, 1, 0.2] }}
           transition={{ repeat: Infinity, duration: 0.1 }}
           className="w-16 h-16 border-2 border-[#FF003C] mb-8 flex items-center justify-center rotate-45"
         >
           <div className="w-8 h-8 bg-[#FF003C] animate-pulse" />
         </motion.div>
-        
+
         <div className="h-32 mb-4 overflow-hidden text-left w-64">
           {logs.map((log, i) => (
             <p key={i} className="text-[#FF003C] text-xs mb-1">{log}</p>
@@ -133,9 +134,9 @@ function GameplayPreloader({ onComplete }: { onComplete: () => void }) {
         </div>
 
         <div className="w-64 h-1 bg-white/10 relative">
-          <motion.div 
-             className="absolute inset-0 bg-[#FF003C] shadow-[0_0_15px_#FF003C]" 
-             style={{ width: `${progress}%` }} 
+          <motion.div
+            className="absolute inset-0 bg-[#FF003C] shadow-[0_0_15px_#FF003C]"
+            style={{ width: `${progress}%` }}
           />
         </div>
       </div>
@@ -185,11 +186,11 @@ function CrosshairCursor() {
       return;
     }
 
-    const moveCursor = (e: MouseEvent) => { 
-      cursorX.set(e.clientX); 
-      cursorY.set(e.clientY); 
+    const moveCursor = (e: MouseEvent) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
     };
-    
+
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest("a, button, .interactive, .tilt-card, input, textarea")) {
@@ -201,7 +202,7 @@ function CrosshairCursor() {
 
     window.addEventListener("mousemove", moveCursor, { passive: true });
     window.addEventListener("mouseover", handleMouseOver, { passive: true });
-    
+
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
@@ -215,7 +216,7 @@ function CrosshairCursor() {
       className="fixed top-0 left-0 pointer-events-none z-[99999] mix-blend-difference items-center justify-center -translate-x-1/2 -translate-y-1/2 hidden md:flex"
       style={{ x: cursorX, y: cursorY }}
     >
-      <motion.div 
+      <motion.div
         animate={{ scale: isHovered ? 1.5 : 1, rotate: isHovered ? 90 : 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}
         className="relative flex items-center justify-center text-[#FF003C]"
@@ -263,7 +264,7 @@ function BloodGrid({ isBooting }: { isBooting: boolean }) {
   useEffect(() => {
     setSparkleCount(window.innerWidth > 768 ? 250 : 100);
   }, []);
-  
+
   useFrame((state) => {
     if (gridRef.current) {
       const speed = isBooting ? 5 : 1.5;
@@ -310,7 +311,7 @@ const RevealText = ({ children, delay = 0 }: { children: React.ReactNode, delay?
       <motion.div
         initial={{ y: "100%", skewY: 10, opacity: 0 }}
         whileInView={{ y: 0, skewY: 0, opacity: 1 }}
-        viewport={{ once: true, margin: "-10%" }} 
+        viewport={{ once: true, margin: "-10%" }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay }}
       >
         {children}
@@ -349,7 +350,7 @@ const TiltCard = ({ children, className = "", floatDelay = 0 }: { children: Reac
     <motion.div
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-5%" }} 
+      viewport={{ once: true, margin: "-5%" }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <ContinuousFloat delay={floatDelay}>
@@ -371,31 +372,56 @@ const TiltCard = ({ children, className = "", floatDelay = 0 }: { children: Reac
 };
 
 function TerminalContactForm() {
-  const [status, setStatus] = useState<"idle" | "transmitting" | "complete">("idle");
+  const [status, setStatus] = useState<"idle" | "transmitting" | "complete" | "error" | "invalid">("idle");
   const [consoleOutput, setConsoleOutput] = useState("");
-  
-  const transmissionSequence = [
-    "> ESTABLISHING SECURE CONNECTION...",
-    "> ENCRYPTING PAYLOAD...",
-    "> UPLOADING TO ARCHITECT MAIN-FRAME...",
-    "> TRANSMISSION SUCCESSFUL. STAND BY."
-  ];
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setConsoleOutput("> ERROR: ALL FIELDS ARE REQUIRED TO PROCEED.\n");
+      setStatus("invalid");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setConsoleOutput("> ERROR: INVALID EMAIL SIGNATURE DETECTED.\n");
+      setStatus("invalid");
+      return;
+    }
+
     setStatus("transmitting");
-    let currentLine = 0;
-    setConsoleOutput("");
-    
-    const interval = setInterval(() => {
-      if (currentLine < transmissionSequence.length) {
-        setConsoleOutput((prev) => prev + transmissionSequence[currentLine] + "\n");
-        currentLine++;
+    setConsoleOutput("> ESTABLISHING SECURE CONNECTION...\n");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setConsoleOutput(prev => prev + "> PAYLOAD ENCRYPTED...\n> UPLOADING TO ARCHITECT MAIN-FRAME...\n> TRANSMISSION SUCCESSFUL. STAND BY.\n");
+        setTimeout(() => setStatus("complete"), 2000);
+        setFormData({ name: "", email: "", message: "" });
       } else {
-        clearInterval(interval);
-        setTimeout(() => setStatus("complete"), 1000);
+        setConsoleOutput(prev => prev + "> ERROR: TRANSMISSION FAILED.\n");
+        setTimeout(() => setStatus("error"), 2000);
       }
-    }, 600);
+    } catch (error) {
+      setConsoleOutput(prev => prev + "> FATAL ERROR: CONNECTION LOST.\n");
+      setTimeout(() => setStatus("error"), 2000);
+    }
   };
 
   if (status !== "idle") {
@@ -405,8 +431,9 @@ function TerminalContactForm() {
           {consoleOutput}
           {status === "transmitting" && <span className="inline-block w-3 h-5 bg-[#FF003C] ml-2" />}
         </pre>
-        {status === "complete" && (
+        {(status === "complete" || status === "error" || status === "invalid") && (
           <button onClick={() => setStatus("idle")} className="mt-8 font-mono text-white text-sm border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition-colors w-fit interactive">
+            {status === "complete" ? "RETURN TO TERMINAL" : "RETRY TRANSMISSION"}
           </button>
         )}
       </div>
@@ -417,15 +444,15 @@ function TerminalContactForm() {
     <form className="flex flex-col gap-10 interactive" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-3">
         <label className="font-mono text-xs text-[#FF003C] tracking-widest uppercase font-bold">PLAYER_NAME</label>
-        <input required type="text" className="bg-[#050505] border border-white/20 p-4 text-white font-mono text-lg focus:outline-none focus:border-[#FF003C] transition-colors cut-corner" />
+        <input type="text" name="name" value={formData.name} onChange={handleChange} className="bg-[#050505] border border-white/20 p-4 text-white font-mono text-lg focus:outline-none focus:border-[#FF003C] transition-colors cut-corner" />
       </div>
       <div className="flex flex-col gap-3">
         <label className="font-mono text-xs text-[#FF003C] tracking-widest uppercase font-bold">CONTACT_EMAIL</label>
-        <input required type="email" className="bg-[#050505] border border-white/20 p-4 text-white font-mono text-lg focus:outline-none focus:border-[#FF003C] transition-colors cut-corner" />
+        <input type="email" name="email" value={formData.email} onChange={handleChange} className="bg-[#050505] border border-white/20 p-4 text-white font-mono text-lg focus:outline-none focus:border-[#FF003C] transition-colors cut-corner" />
       </div>
       <div className="flex flex-col gap-3">
         <label className="font-mono text-xs text-[#FF003C] tracking-widest uppercase font-bold">MESSAGE_DATA</label>
-        <textarea required className="bg-[#050505] border border-white/20 p-4 text-white font-mono text-lg focus:outline-none focus:border-[#FF003C] transition-colors cut-corner resize-none h-32" />
+        <textarea name="message" value={formData.message} onChange={handleChange} className="bg-[#050505] border border-white/20 p-4 text-white font-mono text-lg focus:outline-none focus:border-[#FF003C] transition-colors cut-corner resize-none h-32" />
       </div>
       <button type="submit" className="w-full py-6 bg-[#FF003C] text-white font-display text-3xl tracking-widest hover:bg-white hover:text-black transition-colors mt-4 cut-corner flex justify-center items-center gap-4 group shadow-[0_0_20px_rgba(255,0,60,0.3)]">
         SEND TRANSMISSION <ArrowRight className="group-hover:translate-x-2 transition-transform" />
@@ -433,6 +460,7 @@ function TerminalContactForm() {
     </form>
   );
 }
+
 
 function CertificateStream({ items, reverse = false, onSelect }: { items: any[], reverse?: boolean, onSelect: (item: any) => void }) {
   return (
@@ -474,15 +502,15 @@ function LowPowerBackground() {
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FF003C] rounded-full blur-[150px] opacity-[0.05]" />
 
-      <motion.div 
-        animate={{ y: ["-10vh", "110vh"] }} 
+      <motion.div
+        animate={{ y: ["-10vh", "110vh"] }}
         transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
         className="absolute top-0 left-0 w-full h-[2px] bg-[#FF003C] opacity-20 shadow-[0_0_20px_#FF003C] z-10"
       />
 
       <div className="absolute inset-0 z-0">
         {[...Array(15)].map((_, i) => (
-          <motion.div 
+          <motion.div
             key={i}
             animate={{ opacity: [0.1, 0.5, 0.1] }}
             transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 5 }}
@@ -496,14 +524,14 @@ function LowPowerBackground() {
 
       <div className="absolute inset-0 flex justify-around w-full opacity-40">
         {[...Array(12)].map((_, i) => (
-          <motion.div 
+          <motion.div
             key={i}
             initial={{ y: "-100%" }}
             animate={{ y: "100vh" }}
-            transition={{ 
+            transition={{
               duration: 5 + Math.random() * 10,
-              repeat: Infinity, 
-              ease: "linear", 
+              repeat: Infinity,
+              ease: "linear",
               delay: Math.random() * 5
             }}
             style={{ height: `${Math.random() * 150 + 50}px` }}
@@ -519,7 +547,7 @@ export default function CrimsonAnimatedPortfolio() {
   const [isBooting, setIsBooting] = useState(true);
   const [activeItem, setActiveItem] = useState<any>(null);
   const [vfxEnabled, setVfxEnabled] = useState(true);
-  
+
   const handleBootComplete = useCallback(() => setIsBooting(false), []);
   const isRetroMode = useKonamiCode();
 
@@ -535,7 +563,7 @@ export default function CrimsonAnimatedPortfolio() {
   return (
     <ReactLenis root options={{ lerp: 0.05, smoothWheel: true }}>
       <GlobalStyles />
-      
+
       <AnimatePresence mode="wait">
         {isBooting && <GameplayPreloader key="preloader" onComplete={handleBootComplete} />}
       </AnimatePresence>
@@ -544,12 +572,12 @@ export default function CrimsonAnimatedPortfolio() {
 
       <AnimatePresence>
         {activeItem && (
-          <motion.div 
+          <motion.div
             key="modal-backdrop"
             initial={{ opacity: 0, backdropFilter: "blur(0px)" }} animate={{ opacity: 1, backdropFilter: "blur(10px)" }} exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
             className="fixed inset-0 z-[9000] flex items-center justify-center bg-[#050505]/90 p-4 md:p-12"
           >
-            <motion.div 
+            <motion.div
               key="modal-content"
               initial={{ scale: 0.9, y: 50, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 50, opacity: 0 }} transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="w-full max-w-5xl bg-[#0A0A0A] border border-[#FF003C] cut-corner-both shadow-[0_0_50px_rgba(255,0,60,0.6)] flex flex-col relative"
@@ -558,7 +586,7 @@ export default function CrimsonAnimatedPortfolio() {
                 <span className="font-mono text-sm font-bold tracking-widest uppercase">ITEM_INSPECTION // {activeItem.id}</span>
                 <button onClick={() => setActiveItem(null)} className="interactive hover:text-black transition-colors font-bold"><X /></button>
               </div>
-              
+
               <div className="p-8 md:p-12 flex flex-col md:flex-row gap-12 items-stretch">
                 <div className="w-full md:w-1/2 h-64 md:h-auto border border-[#FF003C]/30 relative flex items-center justify-center overflow-hidden cut-corner">
                   <img src={activeItem.img} alt="Cert" className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity grayscale" />
@@ -566,15 +594,15 @@ export default function CrimsonAnimatedPortfolio() {
                   <Award size={100} className="text-white relative z-10 drop-shadow-[0_0_20px_#FF003C]" />
                 </div>
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
-                   <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity} ITEM</span>
-                   <h3 className="font-display text-5xl md:text-6xl text-white mb-6 leading-none tracking-wide">{activeItem.title}</h3>
-                   <div className="font-mono text-white/70 space-y-4 mb-8">
-                     <p className="flex justify-between border-b border-white/10 pb-2"><span>ISSUER:</span> <span className="text-white font-bold">{activeItem.org}</span></p>
-                     <p className="flex justify-between border-b border-white/10 pb-2"><span>ACQUIRED:</span> <span className="text-white font-bold">{activeItem.date}</span></p>
-                   </div>
-                   <div className="mt-auto p-4 bg-[#FF003C]/10 border border-[#FF003C] text-[#FF003C] font-mono text-sm flex items-center justify-center gap-3">
-                     <ShieldAlert size={18} /> STATUS: VERIFIED CREDENTIAL
-                   </div>
+                  <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity} ITEM</span>
+                  <h3 className="font-display text-5xl md:text-6xl text-white mb-6 leading-none tracking-wide">{activeItem.title}</h3>
+                  <div className="font-mono text-white/70 space-y-4 mb-8">
+                    <p className="flex justify-between border-b border-white/10 pb-2"><span>ISSUER:</span> <span className="text-white font-bold">{activeItem.org}</span></p>
+                    <p className="flex justify-between border-b border-white/10 pb-2"><span>ACQUIRED:</span> <span className="text-white font-bold">{activeItem.date}</span></p>
+                  </div>
+                  <div className="mt-auto p-4 bg-[#FF003C]/10 border border-[#FF003C] text-[#FF003C] font-mono text-sm flex items-center justify-center gap-3">
+                    <ShieldAlert size={18} /> STATUS: VERIFIED CREDENTIAL
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -586,7 +614,7 @@ export default function CrimsonAnimatedPortfolio() {
         <div className="fixed inset-0 z-0 pointer-events-none bg-[#050505]">
           <Canvas camera={{ position: [0, 2, 10], fov: 50 }} dpr={[1, 1.5]} gl={{ powerPreference: "high-performance", antialias: false }}>
             <Suspense fallback={null}>
-               <BloodGrid isBooting={isBooting} />
+              <BloodGrid isBooting={isBooting} />
             </Suspense>
           </Canvas>
         </div>
@@ -597,32 +625,32 @@ export default function CrimsonAnimatedPortfolio() {
       <div className="fixed inset-0 scanlines z-[100] mix-blend-overlay opacity-30 pointer-events-none" />
 
       <main className="relative z-20 w-full text-white selection:bg-[#FF003C] selection:text-white pb-24 overflow-hidden">
-        
+
         <nav className="fixed top-0 left-0 w-full px-6 md:px-12 py-6 flex justify-between items-center z-50 pointer-events-none">
-           <div className="flex flex-col pointer-events-auto">
-             <span className="font-display text-4xl tracking-widest leading-none drop-shadow-[0_0_10px_#FF003C]">Mukul.CV</span>
-           </div>
-           <div className="flex gap-4 pointer-events-auto">
-             <button 
-               onClick={() => setVfxEnabled(!vfxEnabled)}
-               className="interactive font-mono text-xs text-white border border-white/30 bg-[#0A0A0A]/80 backdrop-blur-md px-4 py-3 hover:border-[#FF003C] transition-colors cut-corner-reverse hidden md:block"
-             >
-               VFX: {vfxEnabled ? "ON" : "OFF"}
-             </button>
-             <div className="font-mono text-xs text-white border border-[#FF003C] bg-[#0A0A0A]/80 backdrop-blur-md px-6 py-3 hidden md:flex items-center gap-3 shadow-[0_0_20px_rgba(255,0,60,0.3)] cut-corner-reverse">
-               <span className="w-2 h-2 bg-[#FF003C] animate-pulse" /> {vfxEnabled ? "ONLINE" : "LOW_POWER"}
-             </div>
-           </div>
+          <div className="flex flex-col pointer-events-auto">
+            <span className="font-display text-4xl tracking-widest leading-none drop-shadow-[0_0_10px_#FF003C]">Mukul.CV</span>
+          </div>
+          <div className="flex gap-4 pointer-events-auto">
+            <button
+              onClick={() => setVfxEnabled(!vfxEnabled)}
+              className="interactive font-mono text-xs text-white border border-white/30 bg-[#0A0A0A]/80 backdrop-blur-md px-4 py-3 hover:border-[#FF003C] transition-colors cut-corner-reverse hidden md:block"
+            >
+              VFX: {vfxEnabled ? "ON" : "OFF"}
+            </button>
+            <div className="font-mono text-xs text-white border border-[#FF003C] bg-[#0A0A0A]/80 backdrop-blur-md px-6 py-3 hidden md:flex items-center gap-3 shadow-[0_0_20px_rgba(255,0,60,0.3)] cut-corner-reverse">
+              <span className="w-2 h-2 bg-[#FF003C] animate-pulse" /> {vfxEnabled ? "ONLINE" : "LOW_POWER"}
+            </div>
+          </div>
         </nav>
 
         <section className="min-h-screen flex flex-col justify-center px-[6vw] md:px-[10vw] pt-20">
           <div className="w-full max-w-screen-2xl mx-auto">
-            
+
             <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="mb-8 inline-flex items-center gap-3 bg-[#0A0A0A]/80 backdrop-blur-md border border-[#FF003C]/50 px-6 py-2 cut-corner shadow-[0_0_15px_rgba(255,0,60,0.3)]">
               <Gamepad2 className="text-[#FF003C]" size={20} />
               <span className="font-mono text-sm text-white/80 tracking-widest">Full Stack Developer</span>
             </motion.div>
-            
+
             <div className="flex flex-col">
               <RevealText>
                 <h1 className="font-display text-[18vw] md:text-[14vw] text-white drop-shadow-[0_10px_30px_rgba(255,0,60,0.5)] leading-none">
@@ -638,15 +666,15 @@ export default function CrimsonAnimatedPortfolio() {
 
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mt-12 border-t border-white/10 pt-12">
               <p className="font-mono text-lg md:text-2xl text-white/70 max-w-2xl leading-relaxed border-l-4 border-[#FF003C] pl-6 bg-[#0A0A0A]/40 backdrop-blur-sm py-4">
-                &gt; About:- <span className="text-white font-bold">Tech Enthusiast</span><br/>
-                &gt; Motive <span className="text-white font-bold">Learning through the Process</span><br/>
+                &gt; About:- <span className="text-white font-bold">Tech Enthusiast</span><br />
+                &gt; Motive <span className="text-white font-bold">Learning through the Process</span><br />
                 &gt; MISSION:<span className="text-white font-bold"> Construct flawless digital systems</span>
               </p>
 
               <div className="flex flex-wrap gap-6">
-                 <a href="#quests" className="interactive font-display text-3xl tracking-widest bg-[#FF003C] text-white px-12 py-4 cut-corner hover:bg-white hover:text-black transition-colors shadow-[0_0_30px_rgba(255,0,60,0.4)]">
-                   Projects -&gt;
-                 </a>
+                <a href="#quests" className="interactive font-display text-3xl tracking-widest bg-[#FF003C] text-white px-12 py-4 cut-corner hover:bg-white hover:text-black transition-colors shadow-[0_0_30px_rgba(255,0,60,0.4)]">
+                  Projects -&gt;
+                </a>
               </div>
             </motion.div>
 
@@ -675,48 +703,48 @@ export default function CrimsonAnimatedPortfolio() {
               <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-2">My Technology Stack</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-screen-2xl mx-auto">
-            
+
             <TiltCard className="md:col-span-2" floatDelay={0}>
-               <div className="flex items-center gap-6 mb-8">
-                 <div className="p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Layers className="text-[#FF003C]" size={40} /></div>
-                 <h3 className="font-display text-5xl tracking-widest text-white">FRONTEND</h3>
-               </div>
-               <p className="font-mono text-white/60 mb-10 leading-relaxed text-lg">Pixel-perfect, Responsive layouts and SEO-optimized structures.</p>
-               <div className="flex flex-wrap gap-3">
-                 {['REACTJS', 'TAILWIND', 'HTML/CSS', 'JAVASCRIPT', 'EJS'].map(s => (
-                   <span key={s} className="px-5 py-3 bg-[#050505] border border-white/20 font-mono text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
-                 ))}
-               </div>
+              <div className="flex items-center gap-6 mb-8">
+                <div className="p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Layers className="text-[#FF003C]" size={40} /></div>
+                <h3 className="font-display text-5xl tracking-widest text-white">FRONTEND</h3>
+              </div>
+              <p className="font-mono text-white/60 mb-10 leading-relaxed text-lg">Pixel-perfect, Responsive layouts and SEO-optimized structures.</p>
+              <div className="flex flex-wrap gap-3">
+                {['REACTJS', 'TAILWIND', 'HTML/CSS', 'JAVASCRIPT', 'EJS'].map(s => (
+                  <span key={s} className="px-5 py-3 bg-[#050505] border border-white/20 font-mono text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
+                ))}
+              </div>
             </TiltCard>
 
             <TiltCard floatDelay={1}>
-               <div className="flex items-center gap-6 mb-8">
-                 <div className="p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Database className="text-[#FF003C]" size={40} /></div>
-                 <h3 className="font-display text-5xl tracking-widest text-white">BACKEND</h3>
-               </div>
-               <p className="font-mono text-white/60 mb-10 leading-relaxed text-lg">Robust server data logic and management.</p>
-               <div className="flex flex-wrap gap-3">
-                 {['NODE.JS', 'EXPRESS.JS', 'MONGODB', 'MYSQL', 'POSTGRESQL'].map(s => (
-                   <span key={s} className="px-5 py-3 bg-[#050505] border border-white/20 font-mono text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
-                 ))}
-               </div>
+              <div className="flex items-center gap-6 mb-8">
+                <div className="p-4 bg-[#FF003C]/10 border border-[#FF003C]/30 cut-corner"><Database className="text-[#FF003C]" size={40} /></div>
+                <h3 className="font-display text-5xl tracking-widest text-white">BACKEND</h3>
+              </div>
+              <p className="font-mono text-white/60 mb-10 leading-relaxed text-lg">Robust server data logic and management.</p>
+              <div className="flex flex-wrap gap-3">
+                {['NODE.JS', 'EXPRESS.JS', 'MONGODB', 'MYSQL', 'POSTGRESQL'].map(s => (
+                  <span key={s} className="px-5 py-3 bg-[#050505] border border-white/20 font-mono text-sm text-white hover:border-[#FF003C] hover:text-[#FF003C] transition-colors cursor-default cut-corner">{s}</span>
+                ))}
+              </div>
             </TiltCard>
 
             <TiltCard className="md:col-span-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-12 border-l-[8px] border-l-[#FF003C]" floatDelay={2}>
-               <div className="max-w-2xl">
-                 <div className="flex items-center gap-6 mb-8">
-                   <div className="p-4 bg-white/5 border border-white/20 cut-corner"><Code2 className="text-white" size={40} /></div>
-                   <h3 className="font-display text-5xl tracking-widest text-white">CORE LOGIC</h3>
-                 </div>
-                 <p className="font-mono text-white/60 leading-relaxed text-lg">Competitive programming, algorithm optimization, and memory management.</p>
-               </div>
-               <div className="flex flex-wrap gap-4 md:justify-end">
-                 {['C', 'C#', 'C++', 'PYTHON'].map(s => (
-                   <span key={s} className="px-8 py-4 bg-white text-black font-display text-3xl tracking-widest cut-corner shadow-[0_0_20px_rgba(255,255,255,0.2)]">{s}</span>
-                 ))}
-               </div>
+              <div className="max-w-2xl">
+                <div className="flex items-center gap-6 mb-8">
+                  <div className="p-4 bg-white/5 border border-white/20 cut-corner"><Code2 className="text-white" size={40} /></div>
+                  <h3 className="font-display text-5xl tracking-widest text-white">CORE LOGIC</h3>
+                </div>
+                <p className="font-mono text-white/60 leading-relaxed text-lg">Competitive programming, algorithm optimization, and memory management.</p>
+              </div>
+              <div className="flex flex-wrap gap-4 md:justify-end">
+                {['C', 'C#', 'C++', 'PYTHON'].map(s => (
+                  <span key={s} className="px-8 py-4 bg-white text-black font-display text-3xl tracking-widest cut-corner shadow-[0_0_20px_rgba(255,255,255,0.2)]">{s}</span>
+                ))}
+              </div>
             </TiltCard>
 
           </div>
@@ -729,9 +757,9 @@ export default function CrimsonAnimatedPortfolio() {
               <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-2">Digital Architecture Implementations</p>
             </div>
           </div>
-          
+
           <div className="flex flex-col gap-32 max-w-screen-2xl mx-auto">
-            
+
             <TiltCard className="p-0 border-none bg-transparent hover:border-transparent hover:shadow-none" floatDelay={0}>
               <div className="flex flex-col lg:flex-row gap-0 group bg-[#0A0A0A] border border-[#FF003C]/30 cut-corner overflow-hidden">
                 <div className="w-full lg:w-1/2 h-[400px] md:h-[500px] bg-[#050505] border-b lg:border-b-0 lg:border-r border-[#FF003C]/30 relative flex flex-col items-center justify-center overflow-hidden">
@@ -739,7 +767,7 @@ export default function CrimsonAnimatedPortfolio() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
                   <MonitorSmartphone className="text-[#FF003C] w-32 h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,0,60,0.5)] group-hover:scale-110 transition-transform duration-500" />
                 </div>
-                
+
                 <div className="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center">
                   <span className="font-mono text-[#FF003C] text-xs border border-[#FF003C] px-4 py-2 tracking-widest bg-[#FF003C]/10 cut-corner w-fit mb-6">AUG 2025</span>
                   <h3 className="font-display text-5xl md:text-6xl text-white tracking-widest mb-6 leading-none">APPLE INTERFACE CLONE</h3>
@@ -770,7 +798,7 @@ export default function CrimsonAnimatedPortfolio() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
                   <MonitorSmartphone className="text-white w-32 h-32 relative z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.5)] group-hover:scale-110 transition-transform duration-500" />
                 </div>
-                
+
                 <div className="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center">
                   <span className="font-mono text-white text-xs border border-white px-4 py-2 tracking-widest bg-white/10 cut-corner w-fit mb-6">JUN 2023</span>
                   <h3 className="font-display text-5xl md:text-6xl text-white tracking-widest mb-6 leading-none">NGO PHILANTHROPIC PORTAL</h3>
@@ -805,57 +833,57 @@ export default function CrimsonAnimatedPortfolio() {
           </div>
 
           <div className="max-w-screen-2xl mx-auto flex flex-col gap-10">
-            
+
             <TiltCard className="border-l-[8px] border-l-[#FF003C] !p-0" floatDelay={0}>
-               <div className="flex flex-col lg:flex-row items-stretch">
-                 <div className="p-10 md:p-12 bg-[#FF003C]/10 border-r border-[#FF003C]/30 flex flex-col justify-center w-full lg:w-2/5 relative overflow-hidden">
-                   <Cpu className="text-[#FF003C] opacity-10 absolute -right-10 -bottom-10 w-64 h-64" />
-                   <h3 className="font-display text-5xl md:text-6xl text-white tracking-widest mb-4 relative z-10 leading-none">INTENSIVE DSA TRAINING (C++)</h3>
-                   <p className="font-mono text-[#FF003C] text-sm tracking-widest relative z-10 border border-[#FF003C] px-3 py-1 w-fit bg-[#FF003C]/10 cut-corner">JUN 23 - JUL 23</p>
-                 </div>
-                 
-                 <div className="p-10 md:p-12 font-mono text-white/70 space-y-6 text-lg w-full lg:w-3/5">
-                   <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Mastered core Data Structures and Algorithms using C++.</p>
-                   <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Engineered optimal solutions for competitive programming challenges.</p>
-                   <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Focused heavily on reducing Big-O time and space complexity.</p>
-                 </div>
-               </div>
+              <div className="flex flex-col lg:flex-row items-stretch">
+                <div className="p-10 md:p-12 bg-[#FF003C]/10 border-r border-[#FF003C]/30 flex flex-col justify-center w-full lg:w-2/5 relative overflow-hidden">
+                  <Cpu className="text-[#FF003C] opacity-10 absolute -right-10 -bottom-10 w-64 h-64" />
+                  <h3 className="font-display text-5xl md:text-6xl text-white tracking-widest mb-4 relative z-10 leading-none">INTENSIVE DSA TRAINING (C++)</h3>
+                  <p className="font-mono text-[#FF003C] text-sm tracking-widest relative z-10 border border-[#FF003C] px-3 py-1 w-fit bg-[#FF003C]/10 cut-corner">JUN 23 - JUL 23</p>
+                </div>
+
+                <div className="p-10 md:p-12 font-mono text-white/70 space-y-6 text-lg w-full lg:w-3/5">
+                  <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Mastered core Data Structures and Algorithms using C++.</p>
+                  <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Engineered optimal solutions for competitive programming challenges.</p>
+                  <p className="flex gap-4"><span className="text-[#FF003C] font-bold">&gt;</span> Focused heavily on reducing Big-O time and space complexity.</p>
+                </div>
+              </div>
             </TiltCard>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <TiltCard className="flex flex-col justify-between !p-10" floatDelay={1}>
-                 <div>
-                   <span className="font-mono text-white/30 text-sm tracking-widest uppercase mb-6 block">AUG 2023 - PRESENT</span>
-                   <h4 className="font-display text-5xl text-white tracking-widest mb-2">LOVELY PROFESSIONAL UNIV.</h4>
-                   <p className="font-mono text-white/50 text-lg mb-12">B.Tech - Computer Science</p>
-                 </div>
-                 <div className="bg-[#050505] border border-white/20 p-6 cut-corner w-fit shadow-[0_0_15px_rgba(255,0,60,0.2)]">
-                   <p className="font-display text-6xl text-[#FF003C] tracking-widest leading-none">6.63 <span className="text-lg text-white/40">CGPA</span></p>
-                 </div>
+                <div>
+                  <span className="font-mono text-white/30 text-sm tracking-widest uppercase mb-6 block">AUG 2023 - PRESENT</span>
+                  <h4 className="font-display text-5xl text-white tracking-widest mb-2">LOVELY PROFESSIONAL UNIV.</h4>
+                  <p className="font-mono text-white/50 text-lg mb-12">B.Tech - Computer Science</p>
+                </div>
+                <div className="bg-[#050505] border border-white/20 p-6 cut-corner w-fit shadow-[0_0_15px_rgba(255,0,60,0.2)]">
+                  <p className="font-display text-6xl text-[#FF003C] tracking-widest leading-none">6.63 <span className="text-lg text-white/40">CGPA</span></p>
+                </div>
               </TiltCard>
 
               <div className="flex flex-col gap-10">
                 <TiltCard className="!p-8" floatDelay={1.5}>
-                   <div className="flex justify-between items-start mb-6">
-                     <div>
-                       <h4 className="font-display text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
-                       <p className="font-mono text-sm text-white/50">Intermediate (PCM) | 2022-2023</p>
-                     </div>
-                     <span className="font-display text-5xl text-white">68.4%</span>
-                   </div>
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h4 className="font-display text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
+                      <p className="font-mono text-sm text-white/50">Intermediate (PCM) | 2022-2023</p>
+                    </div>
+                    <span className="font-display text-5xl text-white">68.4%</span>
+                  </div>
                 </TiltCard>
                 <TiltCard className="!p-8 border-l-4 border-l-white/20" floatDelay={2}>
-                   <div className="flex justify-between items-start mb-6">
-                     <div>
-                       <h4 className="font-display text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
-                       <p className="font-mono text-sm text-white/50">Matriculation | 2020-2021</p>
-                     </div>
-                     <span className="font-display text-5xl text-white">83.0%</span>
-                   </div>
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h4 className="font-display text-4xl text-white tracking-widest mb-1">BALAJI PUBLIC SCHOOL</h4>
+                      <p className="font-mono text-sm text-white/50">Matriculation | 2020-2021</p>
+                    </div>
+                    <span className="font-display text-5xl text-white">83.0%</span>
+                  </div>
                 </TiltCard>
               </div>
             </div>
-            
+
           </div>
         </section>
 
@@ -874,19 +902,19 @@ export default function CrimsonAnimatedPortfolio() {
               <span className="w-2 h-2 bg-[#FF003C] animate-ping" /> SCROLLING_ARCHIVE_ACTIVE
             </div>
           </div>
-          
+
           <div className="relative">
             {/* ROW 1: Moves Forward (Left) */}
-            <CertificateStream 
-              items={certificates} 
-              onSelect={setActiveItem} 
+            <CertificateStream
+              items={certificates}
+              onSelect={setActiveItem}
             />
 
             {/* ROW 2: Moves Reverse (Right) */}
-            <CertificateStream 
-              items={[...certificates].reverse()} 
-              reverse={true} 
-              onSelect={setActiveItem} 
+            <CertificateStream
+              items={[...certificates].reverse()}
+              reverse={true}
+              onSelect={setActiveItem}
             />
 
             {/* Side Masks for that "Fade In/Out" look */}
@@ -895,21 +923,21 @@ export default function CrimsonAnimatedPortfolio() {
           </div>
 
           <div className="mt-12 text-center">
-             <p className="font-mono text-[10px] text-white/20 tracking-[0.5em] uppercase">Click any badge to inspect metadata</p>
+            <p className="font-mono text-[10px] text-white/20 tracking-[0.5em] uppercase">Click any badge to inspect metadata</p>
           </div>
         </section>
 
         {/* --- 5. SAVE GAME (CONTACT) --- */}
         <section id="save" className="py-32 px-[6vw] md:px-[10vw] border-t-4 border-[#FF003C] bg-[#050505] relative z-10 overflow-hidden">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-t from-[#FF003C]/20 to-transparent pointer-events-none mix-blend-screen" />
-          
+
           <div className="mb-24 text-center">
-             <RevealText><h2 className="font-display text-7xl md:text-[8vw] text-white tracking-widest leading-none drop-shadow-[0_0_40px_rgba(255,0,60,0.4)]">Contact Me?</h2></RevealText>
-             <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-6">Transmit Data.....</p>
+            <RevealText><h2 className="font-display text-7xl md:text-[8vw] text-white tracking-widest leading-none drop-shadow-[0_0_40px_rgba(255,0,60,0.4)]">Contact Me?</h2></RevealText>
+            <p className="font-mono text-[#FF003C] text-sm tracking-[0.3em] uppercase mt-6">Transmit Data.....</p>
           </div>
-          
+
           <div className="flex flex-col lg:flex-row gap-20 max-w-screen-2xl mx-auto relative z-10">
-            
+
             <div className="w-full lg:w-1/2 bg-[#0A0A0A] border border-[#FF003C]/50 p-8 md:p-12 cut-corner shadow-[0_0_50px_rgba(255,0,60,0.15)] relative group">
               <TerminalContactForm />
             </div>
@@ -920,9 +948,9 @@ export default function CrimsonAnimatedPortfolio() {
                   Currently seeking new opportunities for <span className="text-[#FF003C] font-bold">engineering roles</span> and <span className="text-white font-bold"> collaborations. </span>.
                 </p>
               </div>
-              
+
               <div className="flex flex-col gap-6">
-                <a href="mailto:mukulsinghweb@gmail.com" className="bg-[#0A0A0A] border border-white/10 p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg">
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mukulsinghweb@gmail.com" target="_blank" rel="noopener noreferrer" className="bg-[#0A0A0A] border border-white/10 p-8 flex items-center justify-between hover:border-[#FF003C] hover:bg-[#FF003C]/5 transition-all duration-300 cut-corner interactive group shadow-lg">
                   <div className="flex items-center gap-6">
                     <Mail className="text-white/50 group-hover:text-[#FF003C] transition-colors" size={32} />
                     <p className="font-mono text-sm md:text-lg text-white font-bold">mukulsinghweb@gmail.com</p>
@@ -951,7 +979,6 @@ export default function CrimsonAnimatedPortfolio() {
 
           </div>
         </section>
-
       </main>
     </ReactLenis>
   );
