@@ -494,7 +494,6 @@ function CertificateStream({ items, reverse = false, onSelect }: { items: any[],
             <div className="absolute top-0 right-0 p-2 opacity-5 md:group-hover:opacity-100 transition-opacity">
               <Award className="text-[#FF003C]" size={24} />
             </div>
-            <span className="font-mono text-[10px] text-[#FF003C] tracking-widest border border-[#FF003C]/30 px-2 py-0.5">{cert.rarity}</span>
             <h4 className="font-display text-2xl text-white mt-4 leading-tight uppercase md:group-hover:text-[#FF003C] transition-colors">{cert.title}</h4>
             <div className="mt-auto flex justify-between items-end">
               <p className="font-mono text-[10px] text-white/40 uppercase tracking-tighter">{cert.org}</p>
@@ -613,17 +612,27 @@ export default function CrimsonAnimatedPortfolio() {
         "Engineered optimal solutions for competitive programming challenges.",
         "Focused heavily on reducing Big-O time and space complexity."
       ],
-      certImg: "/certificate/.png"
+      certImg: "/certificate/summer.png"
     }
   ];
 
   const certificates = [
-    { id: "C1", title: "Full Stack Dev", org: "Board Infinity", date: "Jan 2024", rarity: "LEGENDARY", img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000" },
-    { id: "C2", title: "CSS Basics", org: "HackerRank", date: "Oct 2025", rarity: "RARE", img: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=1000" },
-    { id: "C3", title: "Problem Solving", org: "HackerRank", date: "Dec 2023", rarity: "EPIC", img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000" },
-    { id: "C4", title: "C++ Advanced", org: "GeeksForGeeks", date: "Mar 2024", rarity: "LEGENDARY", img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000" },
-    { id: "C5", title: "System Design", org: "Arpit Bhayani", date: "May 2025", rarity: "EPIC", img: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1000" },
-    { id: "C6", title: "Web Architect", org: "FreeCodeCamp", date: "Aug 2025", rarity: "RARE", img: "https://images.unsplash.com/photo-1547658719-da2b51169166?q=80&w=1000" }
+    { id: "C1", title: "Negotiation Skills", org: "University of Michigan", date: "Mar 2026", img: "/certificate/pes-nego.png" },
+    { id: "C2", title: "C# with Microsoft", org: "FreeCodeCamp", date: "Dec 2025", img: "/certificate/csharp.png" },
+    { id: "C3", title: "Python Essentials 1", org: "Cisco Academy", date: "Dec 2025", img: "/certificate/ciscopython.png" },
+    { id: "C4", title: "CSS Basics", org: "HackerRank", date: "Oct 2025", img: "/certificate/csshr.png" },
+    { id: "C5", title: "AI for Beginners", org: "Udemy", date: "Aug 2025", img: "/certificate/aiforbegin.png" },
+    { id: "C6", title: "Build Generative AI", org: "Infosys", date: "Aug 2025", img: "/certificate/infosysenai.png" },
+    { id: "C7", title: "Computational Theory", org: "Infosys", date: "Aug 2025", img: "/certificate/automata.png" },
+    { id: "C8", title: "Prompt Engineering", org: "Infosys", date: "Aug 2025", img: "/certificate/hackathon.png" },
+    { id: "C9", title: "Master AI", org: "Udemy", date: "Aug 2025", img: "/certificate/mastergenai.png" },
+    { id: "C10", title: "ByteBash Hackathon", org: "Lpu", date: "Oct 2024", img: "/certificate/hackathon.png" },
+    { id: "C11", title: "Computer Networking", org: "Coursera", date: "Sep 2024", img: "/certificate/bitandbyte.png" },
+    { id: "C12", title: "Hardware and Operating Systems", org: "Coursera", date: "Sept 2024", img: "/certificate/introtohardware.png" },
+    { id: "C13", title: "CTF Hackathon by RCS", org: "Repulic of Cyber Sentinals", date: "Mar 2024", img: "/certificate/rcs.png" },
+    { id: "C14", title: "Full Stack Dev", org: "Board Infinity", date: "Jan 2024", img: "/certificate/boardinf.png" },
+    { id: "C15", title: "Problem Solving", org: "HackerRank", date: "Dec 2023", img: "/certificate/problem.png" },
+    { id: "C16", title: "Responsive Web Design", org: "FreeCodeCamp", date: "Oct 2023", img: "/certificate/freecodecamp.png" },
   ];
 
   return (
@@ -655,7 +664,7 @@ export default function CrimsonAnimatedPortfolio() {
               
               <div className="p-8 md:p-12 flex flex-col md:flex-row gap-12 items-stretch">
                 <a 
-                  href={`/certificates?id=${activeItem.id}&title=${encodeURIComponent(activeItem.title)}&img=${encodeURIComponent(activeItem.img || activeItem.certImg)}&org=${encodeURIComponent(activeItem.org)}&date=${encodeURIComponent(activeItem.date || activeItem.duration)}&rarity=${encodeURIComponent(activeItem.rarity || 'TRAINING')}`}
+                  href={`/certificates?id=${activeItem.id}&title=${encodeURIComponent(activeItem.title)}&img=${encodeURIComponent(activeItem.img || activeItem.certImg)}&org=${encodeURIComponent(activeItem.org)}&date=${encodeURIComponent(activeItem.date || activeItem.duration)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full md:w-1/2 h-48 md:h-auto border border-[#FF003C]/30 relative flex items-center justify-center overflow-hidden cut-corner interactive group cursor-pointer block"
@@ -668,7 +677,6 @@ export default function CrimsonAnimatedPortfolio() {
                   </div>
                 </a>
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
-                   <span className="font-mono text-[#FF003C] text-sm tracking-widest mb-4 block border border-[#FF003C] px-3 py-1 w-fit animate-pulse">{activeItem.rarity || 'TRAINING'} ITEM</span>
                    <h3 className="font-display text-4xl md:text-6xl text-white mb-6 leading-none tracking-wide">{activeItem.title}</h3>
                    <div className="font-mono text-white/70 space-y-4 mb-8 text-sm md:text-base">
                      <p className="flex justify-between border-b border-white/10 pb-2"><span>ISSUER:</span> <span className="text-white font-bold">{activeItem.org}</span></p>
