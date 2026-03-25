@@ -1074,4 +1074,3 @@ export default function CrimsonAnimatedPortfolio() {
     </ReactLenis>
   );
 }
-// hi some text here
